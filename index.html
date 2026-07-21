@@ -1,14 +1,163 @@
-const menuButton = document.querySelector('.menu-btn');
-const navLinks = document.querySelector('.nav-links');
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Catatrip 2027 — voyage en catamaran au départ du port d'Hyères." />
+  <title>Catatrip 2027</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero" id="accueil">
+    <nav class="nav">
+      <a class="brand" href="#accueil">CATATRIP 2027</a>
+      <button class="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+      <div class="nav-links">
+        <a href="#voyage">Le voyage</a>
+        <a href="#programme">Programme</a>
+        <a href="#bateau">Le bateau</a>
+        <a href="#galerie">Galerie</a>
+      </div>
+    </nav>
 
-menuButton.addEventListener('click', () => {
-  const isOpen = navLinks.classList.toggle('open');
-  menuButton.setAttribute('aria-expanded', String(isOpen));
-});
+    <div class="overlay"></div>
 
-document.querySelectorAll('.nav-links a').forEach((link) => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-    menuButton.setAttribute('aria-expanded', 'false');
-  });
-});
+    <div class="hero-content">
+      <p class="eyebrow">Port d’Hyères • Méditerranée</p>
+      <h1>Catatrip<br>2027</h1>
+      <p class="hero-date">Du 30 juin au 2 juillet 2027</p>
+      <a class="cta" href="#voyage">Découvrir le voyage</a>
+    </div>
+
+    <div class="scroll-indicator">
+      <span>Faire défiler</span>
+      <div class="line"></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro section" id="voyage">
+      <div>
+        <p class="section-kicker">L’aventure commence ici</p>
+        <h2>Trois jours en mer,<br>entre liberté et lagon.</h2>
+      </div>
+      <div class="intro-text">
+        <p>
+          Bienvenue sur le carnet de bord de Catatrip 2027. Nous partirons du port
+          d’Hyères pour quelques jours de navigation, de baignades, de mouillages
+          et de grands moments partagés.
+        </p>
+        <p class="muted">L’itinéraire précis et les étapes seront ajoutés prochainement.</p>
+      </div>
+    </section>
+
+    <section class="stats">
+      <article>
+        <strong>30.06</strong>
+        <span>Départ</span>
+      </article>
+      <article>
+        <strong>3 jours</strong>
+        <span>En mer</span>
+      </article>
+      <article>
+        <strong>02.07</strong>
+        <span>Retour</span>
+      </article>
+      <article>
+        <strong>Hyères</strong>
+        <span>Port de départ</span>
+      </article>
+    </section>
+
+    <section class="section programme" id="programme">
+      <div class="section-heading">
+        <p class="section-kicker">Journal de bord</p>
+        <h2>Le programme</h2>
+      </div>
+
+      <div class="timeline">
+        <article class="day-card">
+          <span class="day-number">01</span>
+          <div>
+            <p class="date">Mercredi 30 juin 2027</p>
+            <h3>Embarquement à Hyères</h3>
+            <p>Installation à bord, découverte du catamaran et première navigation.</p>
+          </div>
+        </article>
+
+        <article class="day-card">
+          <span class="day-number">02</span>
+          <div>
+            <p class="date">Jeudi 1er juillet 2027</p>
+            <h3>Cap sur les îles</h3>
+            <p>Navigation, baignade et mouillage dans une crique aux eaux turquoise.</p>
+          </div>
+        </article>
+
+        <article class="day-card">
+          <span class="day-number">03</span>
+          <div>
+            <p class="date">Vendredi 2 juillet 2027</p>
+            <h3>Derniers bords et retour</h3>
+            <p>Petit-déjeuner face à la mer, dernière baignade puis retour au port.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="boat" id="bateau">
+      <div class="boat-image"></div>
+      <div class="boat-copy">
+        <p class="section-kicker light">Notre maison sur l’eau</p>
+        <h2>Le catamaran</h2>
+        <p>
+          Un Bali 4.2, spacieux et lumineux, pensé pour profiter pleinement de la mer,
+          des mouillages et des couchers de soleil.
+        </p>
+        <div class="boat-details">
+          <div><strong>Bali 4.2</strong><span>Modèle</span></div>
+          <div><strong>12,85 m</strong><span>Longueur</span></div>
+          <div><strong>Catamaran</strong><span>Type</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section gallery" id="galerie">
+      <div class="section-heading">
+        <p class="section-kicker">Souvenirs</p>
+        <h2>La galerie</h2>
+        <p class="muted">Les photos du voyage seront ajoutées ici.</p>
+      </div>
+      <div class="gallery-grid">
+        <figure class="gallery-main">
+          <img src="assets/catamaran.jpg" alt="Catamaran Bali 4.2 dans une eau turquoise" />
+        </figure>
+        <div class="placeholder">
+          <span>+</span>
+          <p>Prochaine photo</p>
+        </div>
+        <div class="placeholder">
+          <span>+</span>
+          <p>Prochaine photo</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="quote">
+      <blockquote>« La mer unit les hommes et les horizons. »</blockquote>
+      <p>Catatrip 2027</p>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#accueil">CATATRIP 2027</a>
+    <p>Du 30 juin au 2 juillet 2027 • Port d’Hyères</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
