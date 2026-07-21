@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Catatrip 2027 — voyage en catamaran au départ du port d’Hyères.">
-  <title>Catatrip 2027</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="Catatrip 2027 — voyage en catamaran au départ du port d’Hyères." name="description"/>
+<title>Catatrip 2027</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=Playfair+Display:wght@600;700&amp;display=swap" rel="stylesheet"/>
+<style>
     * { box-sizing: border-box; }
     :root {
       --ink:#0f2f3b; --blue:#0d6680; --lagoon:#e8f7f7; --sand:#f7f2e8;
@@ -117,13 +118,6 @@
     .balance { margin-top:22px; padding-top:20px; border-top:1px solid var(--line); }
     .balance-row { display:flex; justify-content:space-between; gap:15px; padding:9px 0; }
     .settlement { margin-top:16px; padding:14px; border-radius:14px; background:var(--lagoon); line-height:1.6; }
-
-    .settlement-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid rgba(15,47,59,.12); }
-    .settlement-row:last-child { border-bottom:0; }
-    .paid-btn { border:0; border-radius:999px; padding:9px 13px; background:var(--ink); color:#fff; font-weight:700; white-space:nowrap; }
-    .repayment-history { margin-top:18px; }
-    .repayment-history h4 { margin:0 0 10px; }
-
     .empty { color:var(--muted); text-align:center; padding:23px 10px; border:1px dashed var(--line); border-radius:15px; }
 
     .gallery-grid { display:grid; grid-template-columns:2fr 1fr; grid-template-rows:repeat(2,230px); gap:18px; }
@@ -146,6 +140,20 @@
     .modal-head { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:20px; }
     .modal-head h3 { margin:0; font-size:1.5rem; }
     .close-modal { border:0; background:transparent; font-size:1.4rem; }
+
+
+    .settlement-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid rgba(15,47,59,.12); }
+    .settlement-row:last-child { border-bottom:0; }
+    .paid-btn { border:0; border-radius:999px; padding:9px 13px; background:var(--ink); color:#fff; font-weight:700; white-space:nowrap; }
+    .repayment-history { margin-top:18px; }
+    .repayment-history h4 { margin:0 0 10px; }
+
+
+    .gallery-upload-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .photo-card { position:relative; overflow:hidden; border-radius:22px; aspect-ratio:4/3; background:var(--sand); }
+    .photo-card img { width:100%; height:100%; object-fit:cover; display:block; }
+    .photo-delete { position:absolute; top:10px; right:10px; width:34px; height:34px; border:0; border-radius:50%; background:rgba(15,47,59,.88); color:white; font-size:1.15rem; }
+    .upload-status { margin-top:14px; color:var(--muted); font-size:.9rem; }
 
     @media (max-width:900px) {
       .passenger-grid { grid-template-columns:repeat(2,1fr); }
@@ -172,6 +180,7 @@
       .boat-details { grid-template-columns:1fr; }
       .passenger-grid { grid-template-columns:1fr; }
       .gallery-grid { grid-template-columns:1fr; grid-template-rows:350px 180px 180px; }
+      .gallery-upload-grid { grid-template-columns:1fr; }
       .gallery-main { grid-row:auto; }
       .form-grid { grid-template-columns:1fr; }
       .form-grid .full { grid-column:auto; }
@@ -181,120 +190,111 @@
 </head>
 <body>
 <header class="hero" id="accueil">
-  <nav class="nav">
-    <a class="brand" href="#accueil">CATATRIP 2027</a>
-    <button class="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
-    <div class="nav-links">
-      <a href="#passagers">Passagers</a>
-      <a href="#depenses">Dépenses</a>
-      <a href="#todo">Todo</a>
-      <a href="#programme">Programme</a>
-      <a href="#bateau">Le bateau</a>
-      <a href="#galerie">Galerie</a>
-    </div>
-  </nav>
-  <div class="overlay"></div>
-  <div class="hero-content">
-    <p class="eyebrow">Port d’Hyères • Méditerranée</p>
-    <h1>Catatrip<br>2027</h1>
-    <p class="hero-date">Du 30 juin au 2 juillet 2027</p>
-    <a class="cta" href="#passagers">Voir l’équipage</a>
-  </div>
-  <div class="scroll-indicator"><span>Faire défiler</span><div class="line"></div></div>
+<nav class="nav">
+<a class="brand" href="#accueil">CATATRIP 2027</a>
+<button aria-expanded="false" aria-label="Ouvrir le menu" class="menu-btn">☰</button>
+<div class="nav-links"><a href="#passagers">Passagers</a><a href="#depenses">Dépenses</a><a href="#todo">Todo</a><a href="#programme">Programme</a><a href="#bateau">Le bateau</a><a href="#galerie">Galerie</a></div>
+</nav>
+<div class="overlay"></div>
+<div class="hero-content">
+<p class="eyebrow">Port d’Hyères • Méditerranée</p>
+<h1>Catatrip<br/>2027</h1>
+<p class="hero-date">Du 30 juin au 2 juillet 2027</p>
+<a class="cta" href="#passagers">Voir l’équipage</a>
+</div>
+<div class="scroll-indicator"><span>Faire défiler</span><div class="line"></div></div>
 </header>
-
-<main>
-  <section class="stats">
-    <article><strong>30.06</strong><span>Départ</span></article>
-    <article><strong>3 jours</strong><span>En mer</span></article>
-    <article><strong>02.07</strong><span>Retour</span></article>
-    <article><strong>Hyères</strong><span>Port de départ</span></article>
-  </section>
-
-  <section class="section" id="passagers">
-    <div class="section-heading">
-      <p class="section-kicker">L’équipage</p>
-      <h2>Les passagers</h2>
-      <p class="muted">Ajoutez les participants avec leur prénom, leur rôle et un emoji.</p>
-      <div class="actions"><button class="secondary-btn" id="openPassenger">Ajouter un passager</button></div>
-    </div>
-    <div class="passenger-grid" id="passengerGrid"></div>
-  </section>
-
-  <section class="tool-section">
-    <div class="tool-wrap">
-      <div class="section-heading" id="depenses">
-        <p class="section-kicker">Caisse de bord</p>
-        <h2>Dépenses</h2>
-        <p class="muted">Ajoutez qui a payé et pour qui. Le site calcule automatiquement les soldes et les remboursements.</p>
-      </div>
-      <div class="tool-grid">
-        <section class="panel">
-          <h3>Ajouter une dépense</h3>
-          <form id="expenseForm">
-            <div class="form-grid">
-              <label>Objet<input id="expenseLabel" required placeholder="Courses, essence, port…"></label>
-              <label>Montant (€)<input id="expenseAmount" required type="number" min="0.01" step="0.01" placeholder="0,00"></label>
-              <label>Payé par<select id="expensePayer" required></select></label>
-              <label>Partagé entre<select id="expenseParticipants" multiple size="4" required></select></label>
-            </div>
-            <p class="muted" style="font-size:.8rem">Pour sélectionner plusieurs personnes : maintenez Ctrl (Windows) ou Cmd (Mac).</p>
-            <button class="secondary-btn" type="submit">Ajouter la dépense</button>
-          </form>
-          <div class="list" id="expenseList"></div>
-        </section>
-
-  <section class="section" id="programme">
-    <div class="section-heading"><p class="section-kicker">Journal de bord</p><h2>Le programme</h2></div>
-    <div class="timeline">
-      <article class="day-card"><span class="day-number">01</span><div><p class="date">Mercredi 30 juin 2027</p><h3>Embarquement à Hyères</h3><p>Installation à bord, découverte du catamaran et première navigation.</p></div></article>
-      <article class="day-card"><span class="day-number">02</span><div><p class="date">Jeudi 1er juillet 2027</p><h3>Cap sur les îles</h3><p>Navigation, baignade et mouillage dans une crique aux eaux turquoise.</p></div></article>
-      <article class="day-card"><span class="day-number">03</span><div><p class="date">Vendredi 2 juillet 2027</p><h3>Derniers bords et retour</h3><p>Petit-déjeuner face à la mer, dernière baignade puis retour au port.</p></div></article>
-    </div>
-  </section>
-
-  <section class="boat" id="bateau">
-    <div class="boat-image"></div>
-    <div class="boat-copy">
-      <p class="section-kicker light">Notre maison sur l’eau</p>
-      <h2>Le Bali Catspace</h2>
-      <p>Avec ses étraves inversées, son design audacieux et ses espaces optimisés, le Bali Catspace offre une circulation très fluide et un volume remarquable pour un catamaran de 40 pieds. Son pont avant rigide, son grand espace de vie ouvert et son flybridge en font un bateau particulièrement convivial pour profiter de la navigation et des mouillages.</p>
-      <div class="boat-details">
-        <div><strong>12,33 m</strong><span>Longueur hors tout</span></div>
-        <div><strong>6,59 m</strong><span>Largeur</span></div>
-        <div><strong>70,37 m²</strong><span>Surface de pont utile</span></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="galerie">
-    <div class="section-heading"><p class="section-kicker">Souvenirs</p><h2>La galerie</h2><p class="muted">Les photos du voyage seront ajoutées ici.</p></div>
-    <div class="gallery-grid">
-      <figure class="gallery-main"><img src="catamaran.jpg" alt="Catamaran Bali dans une eau turquoise"></figure>
-      <div class="placeholder"><span>+</span><p>Prochaine photo</p></div>
-      <div class="placeholder"><span>+</span><p>Prochaine photo</p></div>
-    </div>
-  </section>
-
-  <section class="quote"><blockquote>« La mer unit les hommes et les horizons. »</blockquote><p>Catatrip 2027</p></section>
-</main>
-
+<main><section class="stats">
+<article><strong>30.06</strong><span>Départ</span></article>
+<article><strong>3 jours</strong><span>En mer</span></article>
+<article><strong>02.07</strong><span>Retour</span></article>
+<article><strong>Hyères</strong><span>Port de départ</span></article>
+</section><section class="section" id="passagers">
+<div class="section-heading">
+<p class="section-kicker">L’équipage</p>
+<h2>Les passagers</h2>
+<p class="muted">Ajoutez les participants avec leur prénom, leur rôle et un emoji.</p>
+<div class="actions"><button class="secondary-btn" id="openPassenger">Ajouter un passager</button></div>
+</div>
+<div class="passenger-grid" id="passengerGrid"></div>
+</section><section class="tool-section">
+<div class="tool-wrap">
+<div class="section-heading" id="depenses">
+<p class="section-kicker">Caisse de bord</p>
+<h2>Dépenses</h2>
+<p class="muted">Ajoutez qui a payé et pour qui. Le site calcule automatiquement les soldes et les remboursements.</p>
+</div>
+<div class="tool-grid">
+<section class="panel">
+<h3>Ajouter une dépense</h3>
+<form id="expenseForm">
+<div class="form-grid">
+<label>Objet<input id="expenseLabel" placeholder="Courses, essence, port…" required=""/></label>
+<label>Montant (€)<input id="expenseAmount" min="0.01" placeholder="0,00" required="" step="0.01" type="number"/></label>
+<label>Payé par<select id="expensePayer" required=""></select></label>
+<label>Partagé entre<select id="expenseParticipants" multiple="" required="" size="4"></select></label>
+</div>
+<p class="muted" style="font-size:.8rem">Pour sélectionner plusieurs personnes : maintenez Ctrl (Windows) ou Cmd (Mac).</p>
+<button class="secondary-btn" type="submit">Ajouter la dépense</button>
+</form>
+<div class="list" id="expenseList"></div>
+</section>
+<section class="panel">
+<h3>Qui doit quoi ?</h3>
+<div class="balance" id="balanceList"></div>
+<div id="settlements"></div><div class="repayment-history" id="repaymentHistory"></div>
+</section>
+</div>
+<div class="section-heading" id="todo" style="margin-top:90px">
+<p class="section-kicker">Préparatifs</p>
+<h2>Todo list</h2>
+<p class="muted">Ajoutez, cochez et supprimez les choses à faire au fur et à mesure.</p>
+</div>
+<div class="panel">
+<form id="todoForm">
+<div class="form-grid">
+<label class="full">Nouvelle tâche<input id="todoText" placeholder="Acheter les glaçons, réserver le port…" required=""/></label>
+</div>
+<button class="secondary-btn" style="margin-top:14px" type="submit">Ajouter</button>
+</form>
+<div class="list" id="todoList"></div>
+</div>
+</div>
+<p class="data-note"><strong>Données partagées :</strong> les passagers, dépenses, remboursements et tâches sont synchronisés en ligne. Toute personne qui ouvre le site voit les mêmes informations. Lorsqu’un remboursement est marqué comme effectué, les soldes se recalculent automatiquement.</p>
+</section><section class="section" id="programme">
+<div class="section-heading"><p class="section-kicker">Journal de bord</p><h2>Le programme</h2></div>
+<div class="timeline">
+<article class="day-card"><span class="day-number">01</span><div><p class="date">Mercredi 30 juin 2027</p><h3>Embarquement à Hyères</h3><p>Installation à bord, découverte du catamaran et première navigation.</p></div></article>
+<article class="day-card"><span class="day-number">02</span><div><p class="date">Jeudi 1er juillet 2027</p><h3>Cap sur les îles</h3><p>Navigation, baignade et mouillage dans une crique aux eaux turquoise.</p></div></article>
+<article class="day-card"><span class="day-number">03</span><div><p class="date">Vendredi 2 juillet 2027</p><h3>Derniers bords et retour</h3><p>Petit-déjeuner face à la mer, dernière baignade puis retour au port.</p></div></article>
+</div>
+</section><section class="boat" id="bateau">
+<div class="boat-image"></div>
+<div class="boat-copy">
+<p class="section-kicker light">Notre maison sur l’eau</p>
+<h2>Le Bali Catspace</h2>
+<p>Avec ses étraves inversées, son design audacieux et ses espaces optimisés, le Bali Catspace offre une circulation très fluide et un volume remarquable pour un catamaran de 40 pieds. Son pont avant rigide, son grand espace de vie ouvert et son flybridge en font un bateau particulièrement convivial pour profiter de la navigation et des mouillages.</p>
+<div class="boat-details">
+<div><strong>12,33 m</strong><span>Longueur hors tout</span></div>
+<div><strong>6,59 m</strong><span>Largeur</span></div>
+<div><strong>70,37 m²</strong><span>Surface de pont utile</span></div>
+</div>
+</div>
+</section><section class="section" id="galerie"><div class="section-heading"><p class="section-kicker">Souvenirs</p><h2>La galerie</h2><p class="muted">Ajoutez facilement des photos depuis un téléphone ou un ordinateur.</p><div class="actions"><label class="secondary-btn">Ajouter des photos<input accept="image/*" hidden="" id="photoInput" multiple="True" type="file"/></label></div></div><div class="gallery-upload-grid" id="galleryGrid"></div></section></main>
 <footer><a class="brand" href="#accueil">CATATRIP 2027</a><p>Du 30 juin au 2 juillet 2027 • Port d’Hyères</p></footer>
-
 <dialog id="passengerDialog">
-  <div class="modal">
-    <div class="modal-head"><h3>Ajouter un passager</h3><button class="close-modal" type="button" aria-label="Fermer">×</button></div>
-    <form id="passengerForm">
-      <div class="form-grid">
-        <label>Prénom<input id="passengerName" required placeholder="Prénom"></label>
-        <label>Emoji<input id="passengerEmoji" maxlength="4" value="⛵" placeholder="⛵"></label>
-        <label class="full">Rôle ou petite description<input id="passengerRole" placeholder="Capitaine, reine de l’apéro…"></label>
-      </div>
-      <button class="secondary-btn" type="submit" style="margin-top:16px">Ajouter</button>
-    </form>
-  </div>
+<div class="modal">
+<div class="modal-head"><h3>Ajouter un passager</h3><button aria-label="Fermer" class="close-modal" type="button">×</button></div>
+<form id="passengerForm">
+<div class="form-grid">
+<label>Prénom<input id="passengerName" placeholder="Prénom" required=""/></label>
+<label>Emoji<input id="passengerEmoji" maxlength="4" placeholder="⛵" value="⛵"/></label>
+<label class="full">Rôle ou petite description<input id="passengerRole" placeholder="Capitaine, reine de l’apéro…"/></label>
+</div>
+<button class="secondary-btn" style="margin-top:16px" type="submit">Ajouter</button>
+</form>
+</div>
 </dialog>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   /* À REMPLACER APRÈS LA CRÉATION DU PROJET SUPABASE */
@@ -302,7 +302,7 @@
   const SUPABASE_ANON_KEY = "sb_publishable_oEAmiRxEBWt1uWi-t3d6Gg_C_UUzyI4";
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  let data = { passengers: [], expenses: [], repayments: [], todos: [] };
+  let data = { passengers: [], expenses: [], repayments: [], todos: [], photos: [] };
   let editCode = sessionStorage.getItem("catatrip-edit-code") || "";
 
   function configured() {
@@ -332,21 +332,36 @@
 
   async function loadAll() {
     if (!configured()) {
-      document.body.insertAdjacentHTML("afterbegin", '<div style="position:sticky;top:0;z-index:99;padding:12px;background:#fff1c7;color:#5a4300;text-align:center;font-weight:700">Connexion Supabase à terminer : remplace les deux valeurs en haut du fichier index.html.</div>');
+      document.body.insertAdjacentHTML("afterbegin", '<div style="position:sticky;top:0;z-index:99;padding:12px;background:#fff1c7;color:#5a4300;text-align:center;font-weight:700">Connexion Supabase à terminer.</div>');
       renderAll();
       return;
     }
-    const [p, e, r, t] = await Promise.all([
+
+    const results = await Promise.all([
       db.from("passengers").select("*").order("created_at"),
       db.from("expenses").select("*").order("created_at"),
       db.from("repayments").select("*").order("created_at"),
-      db.from("todos").select("*").order("created_at")
+      db.from("todos").select("*").order("created_at"),
+      db.from("gallery_photos").select("*").order("created_at", { ascending:false })
     ]);
-    if (p.error || e.error || r.error || t.error) return handleError(p.error || e.error || r.error || t.error);
-    data.passengers = p.data || [];
-    data.expenses = (e.data || []).map(x => ({...x, amount:Number(x.amount)}));
-    data.repayments = (r.data || []).map(x => ({...x, amount:Number(x.amount)}));
-    data.todos = t.data || [];
+
+    const [p, e, r, t, g] = results;
+
+    if (!p.error) data.passengers = p.data || [];
+    else console.error("passengers", p.error);
+
+    if (!e.error) data.expenses = (e.data || []).map(x => ({...x, amount:Number(x.amount)}));
+    else console.error("expenses", e.error);
+
+    if (!r.error) data.repayments = (r.data || []).map(x => ({...x, amount:Number(x.amount)}));
+    else console.error("repayments", r.error);
+
+    if (!t.error) data.todos = t.data || [];
+    else console.error("todos", t.error);
+
+    if (!g.error) data.photos = g.data || [];
+    else console.error("gallery_photos", g.error);
+
     renderAll();
   }
 
@@ -357,6 +372,7 @@
       .on("postgres_changes", {event:"*", schema:"public", table:"expenses"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"repayments"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"todos"}, loadAll)
+      .on("postgres_changes", {event:"*", schema:"public", table:"gallery_photos"}, loadAll)
       .subscribe();
   }
 
@@ -570,7 +586,87 @@
         <button class="danger-btn" onclick="deleteTodo('${t.id}')" aria-label="Supprimer">×</button>
       </div>`).join(""):'<div class="empty">Aucune tâche.</div>';
   }
-  function renderAll(){renderPassengers();renderPassengerOptions();renderExpenses();renderBalances();renderTodos();}
+
+  async function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = reject;
+        img.onload = () => {
+          const maxSide = 1600;
+          let width = img.width, height = img.height;
+          if (Math.max(width, height) > maxSide) {
+            const ratio = maxSide / Math.max(width, height);
+            width = Math.round(width * ratio);
+            height = Math.round(height * ratio);
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.78));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById("photoInput").addEventListener("change", async e => {
+    const files = [...e.target.files];
+    if (!files.length) return;
+    const code = askEditCode(); if (!code) { e.target.value = ""; return; }
+
+    const status = document.createElement("p");
+    status.className = "upload-status";
+    status.textContent = "Ajout des photos en cours…";
+    e.target.closest(".actions").appendChild(status);
+
+    try {
+      for (const file of files) {
+        if (!file.type.startsWith("image/")) continue;
+        const imageData = await compressImage(file);
+        const { error } = await db.rpc("add_gallery_photo", {
+          p_name: file.name,
+          p_image_data: imageData,
+          p_code: code
+        });
+        if (error) throw error;
+      }
+      status.textContent = "Photos ajoutées.";
+      await loadAll();
+    } catch (error) {
+      handleError(error);
+      status.textContent = "L’ajout a échoué.";
+    } finally {
+      e.target.value = "";
+      setTimeout(() => status.remove(), 2500);
+    }
+  });
+
+  async function deletePhoto(id) {
+    if (!confirm("Supprimer cette photo de la galerie ?")) return;
+    const code = askEditCode(); if (!code) return;
+    const { error } = await db.rpc("delete_gallery_photo", { p_id:id, p_code:code });
+    if (error) return handleError(error);
+    loadAll();
+  }
+
+  function renderGallery() {
+    const grid = document.getElementById("galleryGrid");
+    if (!grid) return;
+    grid.innerHTML = data.photos.length ? data.photos.map(photo => `
+      <figure class="photo-card">
+        <img src="${photo.image_data}" alt="${esc(photo.name || "Photo du voyage")}" loading="lazy">
+        <button class="photo-delete" onclick="deletePhoto('${photo.id}')" aria-label="Supprimer">×</button>
+      </figure>`).join("") : `<div class="empty" style="grid-column:1/-1">Aucune photo pour le moment.</div>`;
+  }
+
+  function renderAll(){renderPassengers();renderPassengerOptions();renderExpenses();renderBalances();renderTodos();renderGallery();}
+
   loadAll();
   subscribeRealtime();
 </script>
