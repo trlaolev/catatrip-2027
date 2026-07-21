@@ -159,15 +159,6 @@
     .multi-help { color:var(--muted); font-weight:400; line-height:1.35; }
     .shopping-meta { display:block; margin-top:4px; color:var(--muted); font-size:.82rem; }
 
-
-    .cabin-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
-    .cabin-card { padding:24px; border:1px solid var(--line); border-radius:22px; background:white; box-shadow:0 15px 45px rgba(15,47,59,.06); }
-    .cabin-card h3 { margin:0 0 6px; font-size:1.35rem; }
-    .cabin-card p { margin:0 0 16px; color:var(--muted); font-size:.88rem; }
-    .cabin-card select { min-height:145px; }
-    .unassigned-box { margin-top:18px; padding:16px 18px; border-radius:16px; background:var(--sand); color:var(--muted); }
-    .unassigned-box strong { color:var(--ink); }
-
     .weather-status { margin-bottom:22px; padding:20px; border-radius:18px; background:var(--lagoon); line-height:1.6; }
     .weather-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
     .weather-card { padding:24px; border:1px solid var(--line); border-radius:22px; background:white; box-shadow:0 15px 45px rgba(15,47,59,.06); }
@@ -196,7 +187,6 @@
       .passenger-grid { grid-template-columns:repeat(2,1fr); }
       .tool-grid { grid-template-columns:1fr; }
       .weather-grid { grid-template-columns:1fr; }
-      .cabin-grid { grid-template-columns:1fr; }
     }
     @media (max-width:800px) {
       .nav { padding:22px 20px; }
@@ -233,7 +223,7 @@
 <nav class="nav">
 <a class="brand" href="#accueil">CATATRIP 2027</a>
 <button aria-expanded="false" aria-label="Ouvrir le menu" class="menu-btn">☰</button>
-<div class="nav-links"><a href="#passagers">Passagers</a><a href="#cabines">Cabines</a><a href="#depenses">Dépenses</a><a href="#todo">Todo</a><a href="#courses">Courses</a><a href="#meteo">Météo</a><a href="#programme">Programme</a><a href="#bateau">Le bateau</a><a href="#galerie">Galerie</a></div>
+<div class="nav-links"><a href="#passagers">Passagers</a><a href="#depenses">Dépenses</a><a href="#todo">Todo</a><a href="#courses">Courses</a><a href="#meteo">Météo</a><a href="#programme">Programme</a><a href="#bateau">Le bateau</a><a href="#galerie">Galerie</a></div>
 </nav>
 <div class="overlay"></div>
 <div class="hero-content">
@@ -257,7 +247,7 @@
 <div class="actions"><button class="secondary-btn" id="openPassenger">Ajouter un passager</button></div>
 </div>
 <div class="passenger-grid" id="passengerGrid"></div>
-</section><section class="section cabins-section" id="cabines"><div class="section-heading"><p class="section-kicker">À bord</p><h2>Répartition des cabines</h2><p class="muted">Sélectionnez les occupants de chaque cabine puis enregistrez la répartition.</p></div><div class="cabin-grid" id="cabinGrid"></div><div class="actions"><button class="secondary-btn" id="saveCabins" type="button">Enregistrer la répartition</button></div><div class="unassigned-box" id="unassignedPassengers"></div></section><section class="tool-section">
+</section><section class="tool-section">
 <div class="tool-wrap">
 <div class="section-heading" id="depenses">
 <p class="section-kicker">Caisse de bord</p>
@@ -342,7 +332,7 @@
   const SUPABASE_ANON_KEY = "sb_publishable_oEAmiRxEBWt1uWi-t3d6Gg_C_UUzyI4";
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  let data = { passengers: [], expenses: [], repayments: [], todos: [], shopping: [], cabins: [], photos: [], photoComments: [] };
+  let data = { passengers: [], expenses: [], repayments: [], todos: [], shopping: [], photos: [], photoComments: [] };
   let editCode = sessionStorage.getItem("catatrip-edit-code") || "";
 
   function configured() {
@@ -383,12 +373,11 @@
       db.from("repayments").select("*").order("created_at"),
       db.from("todos").select("*").order("created_at"),
       db.from("shopping_items").select("*").order("created_at"),
-      db.from("cabin_assignments").select("*"),
       db.from("gallery_photos").select("*").order("created_at", { ascending:false }),
       db.from("photo_comments").select("*").order("created_at")
     ]);
 
-    const [p, e, r, t, s, c, g, pc] = results;
+    const [p, e, r, t, s, g, pc] = results;
 
     if (!p.error) data.passengers = p.data || [];
     else console.error("passengers", p.error);
@@ -404,9 +393,6 @@
 
     if (!s.error) data.shopping = s.data || [];
     else console.error("shopping_items", s.error);
-
-    if (!c.error) data.cabins = c.data || [];
-    else console.error("cabin_assignments", c.error);
 
     if (!g.error) data.photos = g.data || [];
     else console.error("gallery_photos", g.error);
@@ -425,7 +411,6 @@
       .on("postgres_changes", {event:"*", schema:"public", table:"repayments"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"todos"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"shopping_items"}, loadAll)
-      .on("postgres_changes", {event:"*", schema:"public", table:"cabin_assignments"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"gallery_photos"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"photo_comments"}, loadAll)
       .subscribe();
@@ -746,61 +731,6 @@
   }
 
 
-  const CABINS = [
-    { id:"avant-babord", name:"Cabine avant bâbord", detail:"À l’avant, côté gauche" },
-    { id:"arriere-babord", name:"Cabine arrière bâbord", detail:"À l’arrière, côté gauche" },
-    { id:"avant-tribord", name:"Cabine avant tribord", detail:"À l’avant, côté droit" },
-    { id:"arriere-tribord", name:"Cabine arrière tribord", detail:"À l’arrière, côté droit" }
-  ];
-
-  function renderCabins() {
-    const grid = document.getElementById("cabinGrid");
-    if (!grid) return;
-
-    const assignedMap = Object.fromEntries(CABINS.map(c => [c.id, []]));
-    data.cabins.forEach(a => {
-      if (assignedMap[a.cabin_name]) assignedMap[a.cabin_name].push(a.passenger_id);
-    });
-
-    grid.innerHTML = CABINS.map(cabin => `
-      <article class="cabin-card">
-        <h3>${esc(cabin.name)}</h3>
-        <p>${esc(cabin.detail)}</p>
-        <select multiple size="6" data-cabin="${cabin.id}">
-          ${data.passengers.map(p => `<option value="${p.id}" ${assignedMap[cabin.id].includes(p.id) ? "selected" : ""}>${esc(p.name)}</option>`).join("")}
-        </select>
-      </article>
-    `).join("");
-
-    const assigned = new Set(data.cabins.map(a => a.passenger_id));
-    const unassigned = data.passengers.filter(p => !assigned.has(p.id));
-    document.getElementById("unassignedPassengers").innerHTML =
-      `<strong>Sans cabine :</strong> ${unassigned.length ? unassigned.map(p => esc(p.name)).join(", ") : "Tout le monde est placé."}`;
-  }
-
-  document.getElementById("saveCabins").addEventListener("click", async () => {
-    const code = askEditCode(); if (!code) return;
-    const assignments = [];
-    const seen = new Set();
-
-    for (const select of document.querySelectorAll("[data-cabin]")) {
-      for (const option of select.selectedOptions) {
-        if (seen.has(option.value)) {
-          return alert(`${nameById(option.value)} est sélectionné(e) dans plusieurs cabines.`);
-        }
-        seen.add(option.value);
-        assignments.push({ passenger_id: option.value, cabin_name: select.dataset.cabin });
-      }
-    }
-
-    const { error } = await db.rpc("save_cabin_assignments", {
-      p_assignments: assignments,
-      p_code: code
-    });
-    if (error) return handleError(error);
-    loadAll();
-  });
-
   const TRIP_DATES = ["2027-06-30", "2027-07-01", "2027-07-02"];
 
   function weatherDescription(code) {
@@ -1008,7 +938,7 @@
     }).join("") : `<div class="empty" style="grid-column:1/-1">Aucune photo pour le moment.</div>`;
   }
 
-  function renderAll(){renderPassengers();renderPassengerOptions();renderTodoAssigneeOptions();renderShoppingAssigneeOptions();renderExpenses();renderBalances();renderTodos();renderShopping();renderCabins();renderGallery();}
+  function renderAll(){renderPassengers();renderPassengerOptions();renderTodoAssigneeOptions();renderShoppingAssigneeOptions();renderExpenses();renderBalances();renderTodos();renderShopping();renderGallery();}
 
   loadAll();
   loadWeather();
