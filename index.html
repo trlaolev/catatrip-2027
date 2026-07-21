@@ -1,163 +1,555 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Catatrip 2027 — voyage en catamaran au départ du port d'Hyères." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Catatrip 2027 — voyage en catamaran au départ du port d’Hyères.">
   <title>Catatrip 2027</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --ink:#0f2f3b; --blue:#0d6680; --lagoon:#e8f7f7; --sand:#f7f2e8;
+      --white:#fff; --muted:#667a81; --line:rgba(15,47,59,.14); --danger:#9f3b35;
+    }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:#fff; font-family:"DM Sans",sans-serif; }
+    a { color:inherit; text-decoration:none; }
+    button, input, select, textarea { font:inherit; }
+    button { cursor:pointer; }
+
+    .hero {
+      position:relative; min-height:100svh;
+      background:url("catamaran.jpg") center 58% / cover no-repeat;
+      color:white; overflow:hidden;
+    }
+    .overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(90deg,rgba(5,25,34,.74),rgba(5,25,34,.27) 55%,rgba(5,25,34,.12));
+    }
+    .nav {
+      position:relative; z-index:3; display:flex; align-items:center; justify-content:space-between;
+      max-width:1280px; margin:auto; padding:28px 32px;
+    }
+    .brand { font-weight:700; letter-spacing:.18em; font-size:.9rem; }
+    .nav-links { display:flex; gap:27px; font-size:.9rem; }
+    .nav-links a { opacity:.9; }
+    .nav-links a:hover { opacity:1; }
+    .menu-btn { display:none; border:0; background:transparent; color:white; font-size:1.7rem; }
+    .hero-content { position:relative; z-index:2; max-width:1240px; margin:auto; padding:16vh 32px 90px; }
+    .eyebrow,.section-kicker {
+      margin:0 0 18px; text-transform:uppercase; letter-spacing:.2em; font-size:.78rem; font-weight:700;
+    }
+    .hero h1,h2,blockquote { font-family:"Playfair Display",serif; }
+    .hero h1 { margin:0; max-width:720px; font-size:clamp(5rem,10vw,9rem); line-height:.78; letter-spacing:-.055em; }
+    .hero-date { margin:36px 0; font-size:clamp(1.1rem,2vw,1.45rem); }
+    .cta,.secondary-btn {
+      display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:999px;
+      padding:14px 21px; font-weight:700;
+    }
+    .cta { background:rgba(255,255,255,.96); color:var(--ink); }
+    .secondary-btn { background:var(--ink); color:white; }
+    .ghost-btn { border:1px solid var(--line); background:white; border-radius:999px; padding:10px 15px; color:var(--ink); }
+    .danger-btn { border:0; background:transparent; color:var(--danger); padding:6px; }
+    .scroll-indicator { position:absolute; z-index:2; bottom:28px; right:36px; display:flex; align-items:center; gap:14px; font-size:.72rem; text-transform:uppercase; letter-spacing:.16em; }
+    .line { width:68px; height:1px; background:rgba(255,255,255,.8); }
+
+    .section { max-width:1180px; margin:0 auto; padding:115px 30px; }
+    .intro { display:grid; grid-template-columns:1.1fr .9fr; gap:90px; align-items:end; }
+    .section-kicker { color:var(--blue); }
+    h2 { margin:0; font-size:clamp(2.7rem,5vw,5.2rem); line-height:.98; letter-spacing:-.04em; }
+    .intro-text { font-size:1.16rem; line-height:1.75; }
+    .muted { color:var(--muted); }
+
+    .stats { display:grid; grid-template-columns:repeat(4,1fr); background:var(--lagoon); border-block:1px solid rgba(13,102,128,.12); }
+    .stats article { padding:42px 24px; text-align:center; border-right:1px solid rgba(13,102,128,.12); }
+    .stats article:last-child { border-right:0; }
+    .stats strong { display:block; font-family:"Playfair Display",serif; font-size:2rem; }
+    .stats span { display:block; margin-top:8px; color:var(--muted); text-transform:uppercase; letter-spacing:.12em; font-size:.72rem; }
+
+    .section-heading { margin-bottom:65px; }
+    .timeline { display:grid; gap:1px; background:var(--line); border-block:1px solid var(--line); }
+    .day-card { display:grid; grid-template-columns:130px 1fr; gap:36px; padding:44px 10px; background:white; }
+    .day-number { font-family:"Playfair Display",serif; font-size:4rem; color:#9ccfd6; }
+    .date { margin:0 0 10px; color:var(--blue); font-size:.78rem; text-transform:uppercase; letter-spacing:.16em; font-weight:700; }
+    .day-card h3 { margin:0 0 12px; font-size:1.75rem; }
+    .day-card p:last-child { margin-bottom:0; color:var(--muted); line-height:1.65; }
+
+    .boat { display:grid; grid-template-columns:1.05fr .95fr; min-height:720px; background:var(--ink); color:white; }
+    .boat-image { background:url("catamaran.jpg") center / cover no-repeat; }
+    .boat-copy { padding:86px 7vw; display:flex; flex-direction:column; justify-content:center; }
+    .section-kicker.light { color:#8edce4; }
+    .boat-copy p:not(.section-kicker) { max-width:620px; color:rgba(255,255,255,.76); line-height:1.75; font-size:1.08rem; }
+    .boat-details { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:44px; }
+    .boat-details strong,.boat-details span { display:block; }
+    .boat-details strong { margin-bottom:8px; font-size:1.08rem; }
+    .boat-details span { color:rgba(255,255,255,.55); font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; }
+
+    .passenger-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .passenger-card { position:relative; padding:28px; border:1px solid var(--line); border-radius:24px; background:white; box-shadow:0 15px 45px rgba(15,47,59,.06); }
+    .avatar { width:64px; height:64px; border-radius:50%; display:grid; place-items:center; background:var(--lagoon); font-size:2rem; margin-bottom:18px; }
+    .passenger-card h3 { margin:0 0 6px; font-size:1.35rem; }
+    .passenger-card p { margin:0; color:var(--muted); }
+    .card-delete { position:absolute; top:14px; right:14px; }
+
+    .tool-section { background:var(--sand); }
+    .tool-wrap { max-width:1180px; margin:auto; padding:105px 30px; }
+    .tool-grid { display:grid; grid-template-columns:1fr 1fr; gap:26px; }
+    .panel { background:white; border-radius:26px; padding:28px; box-shadow:0 18px 60px rgba(15,47,59,.07); }
+    .panel h3 { margin:0 0 20px; font-size:1.6rem; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .form-grid .full { grid-column:1/-1; }
+    label { display:grid; gap:7px; color:var(--muted); font-size:.82rem; font-weight:600; }
+    input,select,textarea {
+      width:100%; border:1px solid var(--line); border-radius:13px; padding:12px 13px; color:var(--ink); background:white;
+    }
+    textarea { min-height:92px; resize:vertical; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:15px; }
+    .list { display:grid; gap:10px; margin-top:23px; }
+    .list-item { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:14px; border:1px solid var(--line); border-radius:15px; }
+    .list-item-main { min-width:0; }
+    .list-item strong { display:block; }
+    .list-item small { color:var(--muted); }
+    .todo-done strong { text-decoration:line-through; opacity:.55; }
+    .todo-check { width:auto; margin-right:8px; }
+    .balance { margin-top:22px; padding-top:20px; border-top:1px solid var(--line); }
+    .balance-row { display:flex; justify-content:space-between; gap:15px; padding:9px 0; }
+    .settlement { margin-top:16px; padding:14px; border-radius:14px; background:var(--lagoon); line-height:1.6; }
+    .empty { color:var(--muted); text-align:center; padding:23px 10px; border:1px dashed var(--line); border-radius:15px; }
+
+    .gallery-grid { display:grid; grid-template-columns:2fr 1fr; grid-template-rows:repeat(2,230px); gap:18px; }
+    .gallery-main { grid-row:1/span 2; margin:0; overflow:hidden; border-radius:24px; }
+    .gallery-main img { width:100%; height:100%; object-fit:cover; }
+    .placeholder { display:grid; place-content:center; text-align:center; border-radius:24px; background:var(--sand); color:var(--muted); }
+    .placeholder span { font-size:2.5rem; }
+    .placeholder p { margin:4px 0 0; }
+
+    .data-note { max-width:1180px; margin:0 auto; padding:0 30px 85px; color:var(--muted); font-size:.88rem; line-height:1.6; }
+    .quote { padding:110px 30px; text-align:center; background:var(--lagoon); }
+    blockquote { max-width:900px; margin:0 auto 20px; font-size:clamp(2.3rem,5vw,4.8rem); line-height:1.08; }
+    .quote p { text-transform:uppercase; letter-spacing:.18em; font-size:.75rem; font-weight:700; }
+    footer { display:flex; justify-content:space-between; align-items:center; padding:36px 30px; background:var(--ink); color:rgba(255,255,255,.78); }
+    footer p { margin:0; font-size:.85rem; }
+
+    dialog { border:0; border-radius:22px; padding:0; width:min(520px,calc(100% - 30px)); box-shadow:0 24px 100px rgba(0,0,0,.25); }
+    dialog::backdrop { background:rgba(5,25,34,.65); }
+    .modal { padding:28px; }
+    .modal-head { display:flex; align-items:center; justify-content:space-between; gap:15px; margin-bottom:20px; }
+    .modal-head h3 { margin:0; font-size:1.5rem; }
+    .close-modal { border:0; background:transparent; font-size:1.4rem; }
+
+    @media (max-width:900px) {
+      .passenger-grid { grid-template-columns:repeat(2,1fr); }
+      .tool-grid { grid-template-columns:1fr; }
+    }
+    @media (max-width:800px) {
+      .nav { padding:22px 20px; }
+      .menu-btn { display:block; }
+      .nav-links { position:absolute; top:68px; left:20px; right:20px; display:none; flex-direction:column; gap:18px; padding:22px; border-radius:16px; background:rgba(8,39,50,.97); }
+      .nav-links.open { display:flex; }
+      .hero-content { padding:19vh 20px 90px; }
+      .hero h1 { font-size:clamp(4.2rem,23vw,6.2rem); }
+      .scroll-indicator { display:none; }
+      .section,.tool-wrap { padding:82px 20px; }
+      .intro { grid-template-columns:1fr; gap:36px; }
+      .stats { grid-template-columns:repeat(2,1fr); }
+      .stats article:nth-child(2) { border-right:0; }
+      .stats article:nth-child(-n+2) { border-bottom:1px solid rgba(13,102,128,.12); }
+      .day-card { grid-template-columns:72px 1fr; gap:18px; }
+      .day-number { font-size:2.8rem; }
+      .boat { grid-template-columns:1fr; }
+      .boat-image { min-height:400px; }
+      .boat-copy { padding:70px 24px; }
+      .boat-details { grid-template-columns:1fr; }
+      .passenger-grid { grid-template-columns:1fr; }
+      .gallery-grid { grid-template-columns:1fr; grid-template-rows:350px 180px 180px; }
+      .gallery-main { grid-row:auto; }
+      .form-grid { grid-template-columns:1fr; }
+      .form-grid .full { grid-column:auto; }
+      footer { flex-direction:column; gap:12px; text-align:center; }
+    }
+  </style>
 </head>
 <body>
-  <header class="hero" id="accueil">
-    <nav class="nav">
-      <a class="brand" href="#accueil">CATATRIP 2027</a>
-      <button class="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
-      <div class="nav-links">
-        <a href="#voyage">Le voyage</a>
-        <a href="#programme">Programme</a>
-        <a href="#bateau">Le bateau</a>
-        <a href="#galerie">Galerie</a>
-      </div>
-    </nav>
-
-    <div class="overlay"></div>
-
-    <div class="hero-content">
-      <p class="eyebrow">Port d’Hyères • Méditerranée</p>
-      <h1>Catatrip<br>2027</h1>
-      <p class="hero-date">Du 30 juin au 2 juillet 2027</p>
-      <a class="cta" href="#voyage">Découvrir le voyage</a>
-    </div>
-
-    <div class="scroll-indicator">
-      <span>Faire défiler</span>
-      <div class="line"></div>
-    </div>
-  </header>
-
-  <main>
-    <section class="intro section" id="voyage">
-      <div>
-        <p class="section-kicker">L’aventure commence ici</p>
-        <h2>Trois jours en mer,<br>entre liberté et lagon.</h2>
-      </div>
-      <div class="intro-text">
-        <p>
-          Bienvenue sur le carnet de bord de Catatrip 2027. Nous partirons du port
-          d’Hyères pour quelques jours de navigation, de baignades, de mouillages
-          et de grands moments partagés.
-        </p>
-        <p class="muted">L’itinéraire précis et les étapes seront ajoutés prochainement.</p>
-      </div>
-    </section>
-
-    <section class="stats">
-      <article>
-        <strong>30.06</strong>
-        <span>Départ</span>
-      </article>
-      <article>
-        <strong>3 jours</strong>
-        <span>En mer</span>
-      </article>
-      <article>
-        <strong>02.07</strong>
-        <span>Retour</span>
-      </article>
-      <article>
-        <strong>Hyères</strong>
-        <span>Port de départ</span>
-      </article>
-    </section>
-
-    <section class="section programme" id="programme">
-      <div class="section-heading">
-        <p class="section-kicker">Journal de bord</p>
-        <h2>Le programme</h2>
-      </div>
-
-      <div class="timeline">
-        <article class="day-card">
-          <span class="day-number">01</span>
-          <div>
-            <p class="date">Mercredi 30 juin 2027</p>
-            <h3>Embarquement à Hyères</h3>
-            <p>Installation à bord, découverte du catamaran et première navigation.</p>
-          </div>
-        </article>
-
-        <article class="day-card">
-          <span class="day-number">02</span>
-          <div>
-            <p class="date">Jeudi 1er juillet 2027</p>
-            <h3>Cap sur les îles</h3>
-            <p>Navigation, baignade et mouillage dans une crique aux eaux turquoise.</p>
-          </div>
-        </article>
-
-        <article class="day-card">
-          <span class="day-number">03</span>
-          <div>
-            <p class="date">Vendredi 2 juillet 2027</p>
-            <h3>Derniers bords et retour</h3>
-            <p>Petit-déjeuner face à la mer, dernière baignade puis retour au port.</p>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="boat" id="bateau">
-      <div class="boat-image"></div>
-      <div class="boat-copy">
-        <p class="section-kicker light">Notre maison sur l’eau</p>
-        <h2>Le catamaran</h2>
-        <p>
-          Un Bali 4.2, spacieux et lumineux, pensé pour profiter pleinement de la mer,
-          des mouillages et des couchers de soleil.
-        </p>
-        <div class="boat-details">
-          <div><strong>Bali 4.2</strong><span>Modèle</span></div>
-          <div><strong>12,85 m</strong><span>Longueur</span></div>
-          <div><strong>Catamaran</strong><span>Type</span></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section gallery" id="galerie">
-      <div class="section-heading">
-        <p class="section-kicker">Souvenirs</p>
-        <h2>La galerie</h2>
-        <p class="muted">Les photos du voyage seront ajoutées ici.</p>
-      </div>
-      <div class="gallery-grid">
-        <figure class="gallery-main">
-          <img src="assets/catamaran.jpg" alt="Catamaran Bali 4.2 dans une eau turquoise" />
-        </figure>
-        <div class="placeholder">
-          <span>+</span>
-          <p>Prochaine photo</p>
-        </div>
-        <div class="placeholder">
-          <span>+</span>
-          <p>Prochaine photo</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="quote">
-      <blockquote>« La mer unit les hommes et les horizons. »</blockquote>
-      <p>Catatrip 2027</p>
-    </section>
-  </main>
-
-  <footer>
+<header class="hero" id="accueil">
+  <nav class="nav">
     <a class="brand" href="#accueil">CATATRIP 2027</a>
-    <p>Du 30 juin au 2 juillet 2027 • Port d’Hyères</p>
-  </footer>
+    <button class="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+    <div class="nav-links">
+      <a href="#voyage">Le voyage</a>
+      <a href="#programme">Programme</a>
+      <a href="#bateau">Le bateau</a>
+      <a href="#passagers">Passagers</a>
+      <a href="#depenses">Dépenses</a>
+      <a href="#todo">Todo</a>
+      <a href="#galerie">Galerie</a>
+    </div>
+  </nav>
+  <div class="overlay"></div>
+  <div class="hero-content">
+    <p class="eyebrow">Port d’Hyères • Méditerranée</p>
+    <h1>Catatrip<br>2027</h1>
+    <p class="hero-date">Du 30 juin au 2 juillet 2027</p>
+    <a class="cta" href="#voyage">Découvrir le voyage</a>
+  </div>
+  <div class="scroll-indicator"><span>Faire défiler</span><div class="line"></div></div>
+</header>
 
-  <script src="script.js"></script>
+<main>
+  <section class="intro section" id="voyage">
+    <div>
+      <p class="section-kicker">L’aventure commence ici</p>
+      <h2>Trois jours en mer.</h2>
+    </div>
+    <div class="intro-text">
+      <p>Bienvenue sur le carnet de bord de Catatrip 2027. Nous partirons du port d’Hyères pour quelques jours de navigation, de baignades, de mouillages et de grands moments partagés.</p>
+      <p class="muted">L’itinéraire précis et les étapes seront ajoutés prochainement.</p>
+    </div>
+  </section>
+
+  <section class="stats">
+    <article><strong>30.06</strong><span>Départ</span></article>
+    <article><strong>3 jours</strong><span>En mer</span></article>
+    <article><strong>02.07</strong><span>Retour</span></article>
+    <article><strong>Hyères</strong><span>Port de départ</span></article>
+  </section>
+
+  <section class="section" id="programme">
+    <div class="section-heading"><p class="section-kicker">Journal de bord</p><h2>Le programme</h2></div>
+    <div class="timeline">
+      <article class="day-card"><span class="day-number">01</span><div><p class="date">Mercredi 30 juin 2027</p><h3>Embarquement à Hyères</h3><p>Installation à bord, découverte du catamaran et première navigation.</p></div></article>
+      <article class="day-card"><span class="day-number">02</span><div><p class="date">Jeudi 1er juillet 2027</p><h3>Cap sur les îles</h3><p>Navigation, baignade et mouillage dans une crique aux eaux turquoise.</p></div></article>
+      <article class="day-card"><span class="day-number">03</span><div><p class="date">Vendredi 2 juillet 2027</p><h3>Derniers bords et retour</h3><p>Petit-déjeuner face à la mer, dernière baignade puis retour au port.</p></div></article>
+    </div>
+  </section>
+
+  <section class="boat" id="bateau">
+    <div class="boat-image"></div>
+    <div class="boat-copy">
+      <p class="section-kicker light">Notre maison sur l’eau</p>
+      <h2>Le Bali Catspace</h2>
+      <p>Avec ses étraves inversées, son design audacieux et ses espaces optimisés, le Bali Catspace offre une circulation très fluide et un volume remarquable pour un catamaran de 40 pieds. Son pont avant rigide, son grand espace de vie ouvert et son flybridge en font un bateau particulièrement convivial pour profiter de la navigation et des mouillages.</p>
+      <div class="boat-details">
+        <div><strong>12,33 m</strong><span>Longueur hors tout</span></div>
+        <div><strong>6,59 m</strong><span>Largeur</span></div>
+        <div><strong>70,37 m²</strong><span>Surface de pont utile</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="passagers">
+    <div class="section-heading">
+      <p class="section-kicker">L’équipage</p>
+      <h2>Les passagers</h2>
+      <p class="muted">Ajoutez les participants avec leur prénom, leur rôle et un emoji.</p>
+      <div class="actions"><button class="secondary-btn" id="openPassenger">Ajouter un passager</button></div>
+    </div>
+    <div class="passenger-grid" id="passengerGrid"></div>
+  </section>
+
+  <section class="tool-section">
+    <div class="tool-wrap">
+      <div class="section-heading" id="depenses">
+        <p class="section-kicker">Caisse de bord</p>
+        <h2>Dépenses</h2>
+        <p class="muted">Ajoutez qui a payé et pour qui. Le site calcule automatiquement les soldes et les remboursements.</p>
+      </div>
+      <div class="tool-grid">
+        <section class="panel">
+          <h3>Ajouter une dépense</h3>
+          <form id="expenseForm">
+            <div class="form-grid">
+              <label>Objet<input id="expenseLabel" required placeholder="Courses, essence, port…"></label>
+              <label>Montant (€)<input id="expenseAmount" required type="number" min="0.01" step="0.01" placeholder="0,00"></label>
+              <label>Payé par<select id="expensePayer" required></select></label>
+              <label>Partagé entre<select id="expenseParticipants" multiple size="4" required></select></label>
+            </div>
+            <p class="muted" style="font-size:.8rem">Pour sélectionner plusieurs personnes : maintenez Ctrl (Windows) ou Cmd (Mac).</p>
+            <button class="secondary-btn" type="submit">Ajouter la dépense</button>
+          </form>
+          <div class="list" id="expenseList"></div>
+        </section>
+        <section class="panel">
+          <h3>Qui doit quoi ?</h3>
+          <div class="balance" id="balanceList"></div>
+          <div id="settlements"></div>
+          <div class="actions">
+            <button class="ghost-btn" id="exportData">Exporter mes données</button>
+            <label class="ghost-btn" style="display:inline-flex;align-items:center">Importer<input id="importData" type="file" accept="application/json" hidden></label>
+          </div>
+        </section>
+      </div>
+
+      <div class="section-heading" id="todo" style="margin-top:90px">
+        <p class="section-kicker">Préparatifs</p>
+        <h2>Todo list</h2>
+        <p class="muted">Ajoutez, cochez et supprimez les choses à faire au fur et à mesure.</p>
+      </div>
+      <div class="panel">
+        <form id="todoForm">
+          <div class="form-grid">
+            <label class="full">Nouvelle tâche<input id="todoText" required placeholder="Acheter les glaçons, réserver le port…"></label>
+          </div>
+          <button class="secondary-btn" type="submit" style="margin-top:14px">Ajouter</button>
+        </form>
+        <div class="list" id="todoList"></div>
+      </div>
+    </div>
+    <p class="data-note"><strong>À savoir :</strong> les modifications sont enregistrées dans le navigateur de l’appareil utilisé. Elles ne modifient pas automatiquement le fichier publié sur GitHub et ne se synchronisent pas entre plusieurs téléphones. Le bouton « Exporter mes données » permet de créer une sauvegarde à réimporter ailleurs.</p>
+  </section>
+
+  <section class="section" id="galerie">
+    <div class="section-heading"><p class="section-kicker">Souvenirs</p><h2>La galerie</h2><p class="muted">Les photos du voyage seront ajoutées ici.</p></div>
+    <div class="gallery-grid">
+      <figure class="gallery-main"><img src="catamaran.jpg" alt="Catamaran Bali dans une eau turquoise"></figure>
+      <div class="placeholder"><span>+</span><p>Prochaine photo</p></div>
+      <div class="placeholder"><span>+</span><p>Prochaine photo</p></div>
+    </div>
+  </section>
+
+  <section class="quote"><blockquote>« La mer unit les hommes et les horizons. »</blockquote><p>Catatrip 2027</p></section>
+</main>
+
+<footer><a class="brand" href="#accueil">CATATRIP 2027</a><p>Du 30 juin au 2 juillet 2027 • Port d’Hyères</p></footer>
+
+<dialog id="passengerDialog">
+  <div class="modal">
+    <div class="modal-head"><h3>Ajouter un passager</h3><button class="close-modal" type="button" aria-label="Fermer">×</button></div>
+    <form id="passengerForm">
+      <div class="form-grid">
+        <label>Prénom<input id="passengerName" required placeholder="Prénom"></label>
+        <label>Emoji<input id="passengerEmoji" maxlength="4" value="⛵" placeholder="⛵"></label>
+        <label class="full">Rôle ou petite description<input id="passengerRole" placeholder="Capitaine, reine de l’apéro…"></label>
+      </div>
+      <button class="secondary-btn" type="submit" style="margin-top:16px">Ajouter</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+  const STORAGE_KEY = "catatrip2027-data-v2";
+  const initialData = {
+    passengers: [],
+    expenses: [],
+    todos: [
+      { id: crypto.randomUUID(), text: "Confirmer la liste des passagers", done: false },
+      { id: crypto.randomUUID(), text: "Préparer la liste des courses", done: false }
+    ]
+  };
+  let data = loadData();
+
+  function loadData() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : initialData;
+    } catch { return initialData; }
+  }
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    renderAll();
+  }
+  function esc(value) {
+    return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+
+  const menuButton = document.querySelector(".menu-btn");
+  const navLinks = document.querySelector(".nav-links");
+  menuButton.addEventListener("click", () => {
+    const open = navLinks.classList.toggle("open");
+    menuButton.setAttribute("aria-expanded", String(open));
+  });
+  document.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", () => navLinks.classList.remove("open")));
+
+  const dialog = document.getElementById("passengerDialog");
+  document.getElementById("openPassenger").onclick = () => dialog.showModal();
+  document.querySelector(".close-modal").onclick = () => dialog.close();
+  document.getElementById("passengerForm").addEventListener("submit", e => {
+    e.preventDefault();
+    data.passengers.push({
+      id: crypto.randomUUID(),
+      name: document.getElementById("passengerName").value.trim(),
+      emoji: document.getElementById("passengerEmoji").value.trim() || "⛵",
+      role: document.getElementById("passengerRole").value.trim()
+    });
+    e.target.reset();
+    document.getElementById("passengerEmoji").value = "⛵";
+    dialog.close();
+    saveData();
+  });
+
+  function removePassenger(id) {
+    const used = data.expenses.some(x => x.payer === id || x.participants.includes(id));
+    if (used && !confirm("Ce passager apparaît dans des dépenses. Le supprimer supprimera aussi ces dépenses. Continuer ?")) return;
+    data.passengers = data.passengers.filter(p => p.id !== id);
+    data.expenses = data.expenses.filter(x => x.payer !== id && !x.participants.includes(id));
+    saveData();
+  }
+
+  document.getElementById("expenseForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const participants = [...document.getElementById("expenseParticipants").selectedOptions].map(o => o.value);
+    if (!participants.length) return alert("Sélectionnez au moins une personne.");
+    data.expenses.push({
+      id: crypto.randomUUID(),
+      label: document.getElementById("expenseLabel").value.trim(),
+      amount: Number(document.getElementById("expenseAmount").value),
+      payer: document.getElementById("expensePayer").value,
+      participants
+    });
+    e.target.reset();
+    saveData();
+  });
+
+  document.getElementById("todoForm").addEventListener("submit", e => {
+    e.preventDefault();
+    const text = document.getElementById("todoText").value.trim();
+    if (!text) return;
+    data.todos.push({ id: crypto.randomUUID(), text, done:false });
+    e.target.reset();
+    saveData();
+  });
+
+  function renderPassengers() {
+    const grid = document.getElementById("passengerGrid");
+    grid.innerHTML = data.passengers.length ? data.passengers.map(p => `
+      <article class="passenger-card">
+        <button class="danger-btn card-delete" onclick="removePassenger('${p.id}')" aria-label="Supprimer">×</button>
+        <div class="avatar">${esc(p.emoji)}</div>
+        <h3>${esc(p.name)}</h3>
+        <p>${esc(p.role || "Passager du Catatrip")}</p>
+      </article>`).join("") : `<div class="empty" style="grid-column:1/-1">Aucun passager pour le moment.</div>`;
+  }
+
+  function renderPassengerOptions() {
+    const payer = document.getElementById("expensePayer");
+    const participants = document.getElementById("expenseParticipants");
+    const options = data.passengers.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+    payer.innerHTML = `<option value="">Choisir…</option>${options}`;
+    participants.innerHTML = options;
+  }
+
+  function nameById(id) {
+    return data.passengers.find(p => p.id === id)?.name || "Passager supprimé";
+  }
+
+  function renderExpenses() {
+    const list = document.getElementById("expenseList");
+    list.innerHTML = data.expenses.length ? data.expenses.map(x => `
+      <div class="list-item">
+        <div class="list-item-main">
+          <strong>${esc(x.label)} — ${x.amount.toFixed(2).replace(".",",")} €</strong>
+          <small>Payé par ${esc(nameById(x.payer))} • partagé entre ${x.participants.map(nameById).map(esc).join(", ")}</small>
+        </div>
+        <button class="danger-btn" onclick="deleteExpense('${x.id}')" aria-label="Supprimer">×</button>
+      </div>`).join("") : `<div class="empty">Aucune dépense enregistrée.</div>`;
+  }
+
+  function deleteExpense(id) {
+    data.expenses = data.expenses.filter(x => x.id !== id);
+    saveData();
+  }
+
+  function calculateBalances() {
+    const balances = Object.fromEntries(data.passengers.map(p => [p.id, 0]));
+    for (const x of data.expenses) {
+      if (!(x.payer in balances) || !x.participants.length) continue;
+      balances[x.payer] += x.amount;
+      const share = x.amount / x.participants.length;
+      x.participants.forEach(id => { if (id in balances) balances[id] -= share; });
+    }
+    return balances;
+  }
+
+  function getSettlements(balances) {
+    const creditors = Object.entries(balances).filter(([,v]) => v > .005).map(([id,v]) => ({id, amount:v})).sort((a,b)=>b.amount-a.amount);
+    const debtors = Object.entries(balances).filter(([,v]) => v < -.005).map(([id,v]) => ({id, amount:-v})).sort((a,b)=>b.amount-a.amount);
+    const result = [];
+    let i=0,j=0;
+    while(i<debtors.length && j<creditors.length) {
+      const amount = Math.min(debtors[i].amount, creditors[j].amount);
+      result.push({from:debtors[i].id,to:creditors[j].id,amount});
+      debtors[i].amount -= amount; creditors[j].amount -= amount;
+      if(debtors[i].amount < .005) i++;
+      if(creditors[j].amount < .005) j++;
+    }
+    return result;
+  }
+
+  function renderBalances() {
+    const balances = calculateBalances();
+    const wrap = document.getElementById("balanceList");
+    if (!data.passengers.length) {
+      wrap.innerHTML = `<div class="empty">Ajoutez d’abord les passagers.</div>`;
+      document.getElementById("settlements").innerHTML = "";
+      return;
+    }
+    wrap.innerHTML = data.passengers.map(p => {
+      const value = balances[p.id] || 0;
+      const label = value > .005 ? `doit recevoir ${value.toFixed(2).replace(".",",")} €` :
+                    value < -.005 ? `doit ${Math.abs(value).toFixed(2).replace(".",",")} €` : "est à l’équilibre";
+      return `<div class="balance-row"><strong>${esc(p.name)}</strong><span>${label}</span></div>`;
+    }).join("");
+    const settlements = getSettlements(balances);
+    document.getElementById("settlements").innerHTML = settlements.length
+      ? `<div class="settlement"><strong>Remboursements conseillés</strong><br>${settlements.map(s => `${esc(nameById(s.from))} → ${esc(nameById(s.to))} : <strong>${s.amount.toFixed(2).replace(".",",")} €</strong>`).join("<br>")}</div>`
+      : `<div class="settlement">Tout le monde est à l’équilibre.</div>`;
+  }
+
+  function renderTodos() {
+    const list = document.getElementById("todoList");
+    list.innerHTML = data.todos.length ? data.todos.map(t => `
+      <div class="list-item ${t.done ? "todo-done" : ""}">
+        <div class="list-item-main">
+          <label style="display:flex;grid-template-columns:auto 1fr;align-items:center;color:inherit;font-size:1rem">
+            <input class="todo-check" type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTodo('${t.id}')">
+            <strong>${esc(t.text)}</strong>
+          </label>
+        </div>
+        <button class="danger-btn" onclick="deleteTodo('${t.id}')" aria-label="Supprimer">×</button>
+      </div>`).join("") : `<div class="empty">Aucune tâche.</div>`;
+  }
+
+  function toggleTodo(id) {
+    const todo = data.todos.find(t => t.id === id);
+    if (todo) todo.done = !todo.done;
+    saveData();
+  }
+  function deleteTodo(id) {
+    data.todos = data.todos.filter(t => t.id !== id);
+    saveData();
+  }
+
+  document.getElementById("exportData").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = "catatrip-2027-donnees.json"; a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById("importData").addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result);
+        if (!imported.passengers || !imported.expenses || !imported.todos) throw new Error();
+        data = imported; saveData(); alert("Données importées.");
+      } catch { alert("Fichier invalide."); }
+    };
+    reader.readAsText(file);
+  });
+
+  function renderAll() {
+    renderPassengers();
+    renderPassengerOptions();
+    renderExpenses();
+    renderBalances();
+    renderTodos();
+  }
+  renderAll();
+</script>
 </body>
 </html>
