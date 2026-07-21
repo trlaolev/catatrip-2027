@@ -117,6 +117,13 @@
     .balance { margin-top:22px; padding-top:20px; border-top:1px solid var(--line); }
     .balance-row { display:flex; justify-content:space-between; gap:15px; padding:9px 0; }
     .settlement { margin-top:16px; padding:14px; border-radius:14px; background:var(--lagoon); line-height:1.6; }
+
+    .settlement-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid rgba(15,47,59,.12); }
+    .settlement-row:last-child { border-bottom:0; }
+    .paid-btn { border:0; border-radius:999px; padding:9px 13px; background:var(--ink); color:#fff; font-weight:700; white-space:nowrap; }
+    .repayment-history { margin-top:18px; }
+    .repayment-history h4 { margin:0 0 10px; }
+
     .empty { color:var(--muted); text-align:center; padding:23px 10px; border:1px dashed var(--line); border-radius:15px; }
 
     .gallery-grid { display:grid; grid-template-columns:2fr 1fr; grid-template-rows:repeat(2,230px); gap:18px; }
@@ -178,12 +185,11 @@
     <a class="brand" href="#accueil">CATATRIP 2027</a>
     <button class="menu-btn" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
     <div class="nav-links">
-      <a href="#voyage">Le voyage</a>
-      <a href="#programme">Programme</a>
-      <a href="#bateau">Le bateau</a>
       <a href="#passagers">Passagers</a>
       <a href="#depenses">Dépenses</a>
       <a href="#todo">Todo</a>
+      <a href="#programme">Programme</a>
+      <a href="#bateau">Le bateau</a>
       <a href="#galerie">Galerie</a>
     </div>
   </nav>
@@ -192,51 +198,17 @@
     <p class="eyebrow">Port d’Hyères • Méditerranée</p>
     <h1>Catatrip<br>2027</h1>
     <p class="hero-date">Du 30 juin au 2 juillet 2027</p>
-    <a class="cta" href="#voyage">Découvrir le voyage</a>
+    <a class="cta" href="#passagers">Voir l’équipage</a>
   </div>
   <div class="scroll-indicator"><span>Faire défiler</span><div class="line"></div></div>
 </header>
 
 <main>
-  <section class="intro section" id="voyage">
-    <div>
-      <p class="section-kicker">L’aventure commence ici</p>
-      <h2>Trois jours en mer.</h2>
-    </div>
-    <div class="intro-text">
-      <p>Bienvenue sur le carnet de bord de Catatrip 2027. Nous partirons du port d’Hyères pour quelques jours de navigation, de baignades, de mouillages et de grands moments partagés.</p>
-      <p class="muted">L’itinéraire précis et les étapes seront ajoutés prochainement.</p>
-    </div>
-  </section>
-
   <section class="stats">
     <article><strong>30.06</strong><span>Départ</span></article>
     <article><strong>3 jours</strong><span>En mer</span></article>
     <article><strong>02.07</strong><span>Retour</span></article>
     <article><strong>Hyères</strong><span>Port de départ</span></article>
-  </section>
-
-  <section class="section" id="programme">
-    <div class="section-heading"><p class="section-kicker">Journal de bord</p><h2>Le programme</h2></div>
-    <div class="timeline">
-      <article class="day-card"><span class="day-number">01</span><div><p class="date">Mercredi 30 juin 2027</p><h3>Embarquement à Hyères</h3><p>Installation à bord, découverte du catamaran et première navigation.</p></div></article>
-      <article class="day-card"><span class="day-number">02</span><div><p class="date">Jeudi 1er juillet 2027</p><h3>Cap sur les îles</h3><p>Navigation, baignade et mouillage dans une crique aux eaux turquoise.</p></div></article>
-      <article class="day-card"><span class="day-number">03</span><div><p class="date">Vendredi 2 juillet 2027</p><h3>Derniers bords et retour</h3><p>Petit-déjeuner face à la mer, dernière baignade puis retour au port.</p></div></article>
-    </div>
-  </section>
-
-  <section class="boat" id="bateau">
-    <div class="boat-image"></div>
-    <div class="boat-copy">
-      <p class="section-kicker light">Notre maison sur l’eau</p>
-      <h2>Le Bali Catspace</h2>
-      <p>Avec ses étraves inversées, son design audacieux et ses espaces optimisés, le Bali Catspace offre une circulation très fluide et un volume remarquable pour un catamaran de 40 pieds. Son pont avant rigide, son grand espace de vie ouvert et son flybridge en font un bateau particulièrement convivial pour profiter de la navigation et des mouillages.</p>
-      <div class="boat-details">
-        <div><strong>12,33 m</strong><span>Longueur hors tout</span></div>
-        <div><strong>6,59 m</strong><span>Largeur</span></div>
-        <div><strong>70,37 m²</strong><span>Surface de pont utile</span></div>
-      </div>
-    </div>
   </section>
 
   <section class="section" id="passagers">
@@ -271,30 +243,28 @@
           </form>
           <div class="list" id="expenseList"></div>
         </section>
-        <section class="panel">
-          <h3>Qui doit quoi ?</h3>
-          <div class="balance" id="balanceList"></div>
-          <div id="settlements"></div>
 
-        </section>
-      </div>
+  <section class="section" id="programme">
+    <div class="section-heading"><p class="section-kicker">Journal de bord</p><h2>Le programme</h2></div>
+    <div class="timeline">
+      <article class="day-card"><span class="day-number">01</span><div><p class="date">Mercredi 30 juin 2027</p><h3>Embarquement à Hyères</h3><p>Installation à bord, découverte du catamaran et première navigation.</p></div></article>
+      <article class="day-card"><span class="day-number">02</span><div><p class="date">Jeudi 1er juillet 2027</p><h3>Cap sur les îles</h3><p>Navigation, baignade et mouillage dans une crique aux eaux turquoise.</p></div></article>
+      <article class="day-card"><span class="day-number">03</span><div><p class="date">Vendredi 2 juillet 2027</p><h3>Derniers bords et retour</h3><p>Petit-déjeuner face à la mer, dernière baignade puis retour au port.</p></div></article>
+    </div>
+  </section>
 
-      <div class="section-heading" id="todo" style="margin-top:90px">
-        <p class="section-kicker">Préparatifs</p>
-        <h2>Todo list</h2>
-        <p class="muted">Ajoutez, cochez et supprimez les choses à faire au fur et à mesure.</p>
-      </div>
-      <div class="panel">
-        <form id="todoForm">
-          <div class="form-grid">
-            <label class="full">Nouvelle tâche<input id="todoText" required placeholder="Acheter les glaçons, réserver le port…"></label>
-          </div>
-          <button class="secondary-btn" type="submit" style="margin-top:14px">Ajouter</button>
-        </form>
-        <div class="list" id="todoList"></div>
+  <section class="boat" id="bateau">
+    <div class="boat-image"></div>
+    <div class="boat-copy">
+      <p class="section-kicker light">Notre maison sur l’eau</p>
+      <h2>Le Bali Catspace</h2>
+      <p>Avec ses étraves inversées, son design audacieux et ses espaces optimisés, le Bali Catspace offre une circulation très fluide et un volume remarquable pour un catamaran de 40 pieds. Son pont avant rigide, son grand espace de vie ouvert et son flybridge en font un bateau particulièrement convivial pour profiter de la navigation et des mouillages.</p>
+      <div class="boat-details">
+        <div><strong>12,33 m</strong><span>Longueur hors tout</span></div>
+        <div><strong>6,59 m</strong><span>Largeur</span></div>
+        <div><strong>70,37 m²</strong><span>Surface de pont utile</span></div>
       </div>
     </div>
-    <p class="data-note"><strong>Données partagées :</strong> les passagers, dépenses et tâches sont synchronisés en ligne. Toute personne qui ouvre le site voit les mêmes informations. Le code de modification est demandé uniquement pour ajouter, cocher ou supprimer un élément.</p>
   </section>
 
   <section class="section" id="galerie">
@@ -332,7 +302,7 @@
   const SUPABASE_ANON_KEY = "sb_publishable_oEAmiRxEBWt1uWi-t3d6Gg_C_UUzyI4";
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  let data = { passengers: [], expenses: [], todos: [] };
+  let data = { passengers: [], expenses: [], repayments: [], todos: [] };
   let editCode = sessionStorage.getItem("catatrip-edit-code") || "";
 
   function configured() {
@@ -366,14 +336,16 @@
       renderAll();
       return;
     }
-    const [p, e, t] = await Promise.all([
+    const [p, e, r, t] = await Promise.all([
       db.from("passengers").select("*").order("created_at"),
       db.from("expenses").select("*").order("created_at"),
+      db.from("repayments").select("*").order("created_at"),
       db.from("todos").select("*").order("created_at")
     ]);
-    if (p.error || e.error || t.error) return handleError(p.error || e.error || t.error);
+    if (p.error || e.error || r.error || t.error) return handleError(p.error || e.error || r.error || t.error);
     data.passengers = p.data || [];
     data.expenses = (e.data || []).map(x => ({...x, amount:Number(x.amount)}));
+    data.repayments = (r.data || []).map(x => ({...x, amount:Number(x.amount)}));
     data.todos = t.data || [];
     renderAll();
   }
@@ -383,6 +355,7 @@
     db.channel("catatrip-live")
       .on("postgres_changes", {event:"*", schema:"public", table:"passengers"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"expenses"}, loadAll)
+      .on("postgres_changes", {event:"*", schema:"public", table:"repayments"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"todos"}, loadAll)
       .subscribe();
   }
@@ -505,6 +478,10 @@
       const share = Number(x.amount) / x.participants.length;
       x.participants.forEach(id => { if (id in balances) balances[id] -= share; });
     }
+    for (const r of data.repayments) {
+      if (r.from_id in balances) balances[r.from_id] += Number(r.amount);
+      if (r.to_id in balances) balances[r.to_id] -= Number(r.amount);
+    }
     return balances;
   }
   function getSettlements(balances) {
@@ -521,15 +498,68 @@
   }
   function renderBalances() {
     const balances=calculateBalances(), wrap=document.getElementById("balanceList");
-    if(!data.passengers.length){wrap.innerHTML='<div class="empty">Ajoutez d’abord les passagers.</div>';document.getElementById("settlements").innerHTML="";return;}
+    if(!data.passengers.length){
+      wrap.innerHTML='<div class="empty">Ajoutez d’abord les passagers.</div>';
+      document.getElementById("settlements").innerHTML="";
+      renderRepaymentHistory();
+      return;
+    }
     wrap.innerHTML=data.passengers.map(p=>{
       const v=balances[p.id]||0;
       const label=v>.005?`doit recevoir ${v.toFixed(2).replace(".",",")} €`:v<-.005?`doit ${Math.abs(v).toFixed(2).replace(".",",")} €`:"est à l’équilibre";
       return `<div class="balance-row"><strong>${esc(p.name)}</strong><span>${label}</span></div>`;
     }).join("");
+
     const s=getSettlements(balances);
-    document.getElementById("settlements").innerHTML=s.length?`<div class="settlement"><strong>Remboursements conseillés</strong><br>${s.map(x=>`${esc(nameById(x.from))} → ${esc(nameById(x.to))} : <strong>${x.amount.toFixed(2).replace(".",",")} €</strong>`).join("<br>")}</div>`:'<div class="settlement">Tout le monde est à l’équilibre.</div>';
+    document.getElementById("settlements").innerHTML=s.length
+      ? `<div class="settlement"><strong>Remboursements conseillés</strong>${s.map(x=>`
+          <div class="settlement-row">
+            <span>${esc(nameById(x.from))} → ${esc(nameById(x.to))} : <strong>${x.amount.toFixed(2).replace(".",",")} €</strong></span>
+            <button class="paid-btn" onclick="markRepaid('${x.from}','${x.to}',${x.amount})">Marquer remboursé</button>
+          </div>`).join("")}</div>`
+      : '<div class="settlement">Tout le monde est à l’équilibre.</div>';
+
+    renderRepaymentHistory();
   }
+
+  async function markRepaid(fromId, toId, amount) {
+    if (!confirm(`Confirmer le remboursement de ${Number(amount).toFixed(2).replace(".",",")} € ?`)) return;
+    const code = askEditCode(); if (!code) return;
+    const { error } = await db.rpc("add_repayment", {
+      p_from: fromId,
+      p_to: toId,
+      p_amount: Number(amount.toFixed(2)),
+      p_code: code
+    });
+    if (error) return handleError(error);
+    loadAll();
+  }
+
+  async function deleteRepayment(id) {
+    if (!confirm("Annuler l’enregistrement de ce remboursement ?")) return;
+    const code = askEditCode(); if (!code) return;
+    const { error } = await db.rpc("delete_repayment", { p_id:id, p_code:code });
+    if (error) return handleError(error);
+    loadAll();
+  }
+
+  function renderRepaymentHistory() {
+    const wrap = document.getElementById("repaymentHistory");
+    if (!wrap) return;
+    if (!data.repayments.length) {
+      wrap.innerHTML = "";
+      return;
+    }
+    wrap.innerHTML = `<h4>Remboursements effectués</h4>${data.repayments.slice().reverse().map(r => `
+      <div class="list-item">
+        <div class="list-item-main">
+          <strong>${esc(nameById(r.from_id))} → ${esc(nameById(r.to_id))} : ${Number(r.amount).toFixed(2).replace(".",",")} €</strong>
+          <small>${new Date(r.created_at).toLocaleDateString("fr-FR")}</small>
+        </div>
+        <button class="danger-btn" onclick="deleteRepayment('${r.id}')" aria-label="Annuler">×</button>
+      </div>`).join("")}`;
+  }
+
   function renderTodos() {
     const list=document.getElementById("todoList");
     list.innerHTML=data.todos.length?data.todos.map(t=>`
