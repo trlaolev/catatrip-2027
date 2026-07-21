@@ -325,12 +325,12 @@
   function handleError(error) {
     console.error(error);
     const msg = error?.message || "Une erreur est survenue.";
-    if (/code|invalid|refus/i.test(msg)) {
+    if (/code invalide/i.test(msg)) {
       editCode = "";
       sessionStorage.removeItem("catatrip-edit-code");
       alert("Code de modification incorrect.");
     } else {
-      alert(msg);
+      alert("Erreur Supabase : " + msg);
     }
   }
 
