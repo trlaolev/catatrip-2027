@@ -254,7 +254,7 @@
 <form id="todoForm">
 <div class="form-grid">
 <label class="full">Nouvelle tâche<input id="todoText" placeholder="Acheter les glaçons, réserver le port…" required=""/></label>
-</div>
+<label>Attribuée à<select id="todoAssignee"></select></label></div>
 <button class="secondary-btn" style="margin-top:14px" type="submit">Ajouter</button>
 </form>
 <div class="list" id="todoList"></div>
@@ -437,10 +437,17 @@
     e.preventDefault();
     const code = askEditCode(); if (!code) return;
     const text = document.getElementById("todoText").value.trim();
+    const assignee = document.getElementById("todoAssignee").value || null;
     if (!text) return;
-    const { error } = await db.rpc("add_todo", {p_text:text, p_code:code});
+    const { error } = await db.rpc("add_todo_with_assignee", {
+      p_text: text,
+      p_assignee: assignee,
+      p_code: code
+    });
     if (error) return handleError(error);
-    e.target.reset(); loadAll();
+    e.target.reset();
+    renderTodoAssigneeOptions();
+    loadAll();
   });
 
   async function toggleTodo(id) {
@@ -576,15 +583,33 @@
       </div>`).join("")}`;
   }
 
+  function renderTodoAssigneeOptions() {
+    const select = document.getElementById("todoAssignee");
+    if (!select) return;
+    const current = select.value;
+    select.innerHTML = `<option value="">All — tout le monde</option>` +
+      data.passengers.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+    if ([...select.options].some(o => o.value === current)) select.value = current;
+  }
+
   function renderTodos() {
     const list=document.getElementById("todoList");
-    list.innerHTML=data.todos.length?data.todos.map(t=>`
+    list.innerHTML=data.todos.length?data.todos.map(t=>{
+      const assigneeLabel = t.assignee ? nameById(t.assignee) : "All";
+      return `
       <div class="list-item ${t.done?"todo-done":""}">
-        <div class="list-item-main"><label style="display:flex;grid-template-columns:auto 1fr;align-items:center;color:inherit;font-size:1rem">
-          <input class="todo-check" type="checkbox" ${t.done?"checked":""} onchange="toggleTodo('${t.id}')"><strong>${esc(t.text)}</strong>
-        </label></div>
+        <div class="list-item-main">
+          <label style="display:flex;grid-template-columns:auto 1fr;align-items:center;color:inherit;font-size:1rem">
+            <input class="todo-check" type="checkbox" ${t.done?"checked":""} onchange="toggleTodo('${t.id}')">
+            <span>
+              <strong>${esc(t.text)}</strong>
+              <small>Attribuée à : ${esc(assigneeLabel)}</small>
+            </span>
+          </label>
+        </div>
         <button class="danger-btn" onclick="deleteTodo('${t.id}')" aria-label="Supprimer">×</button>
-      </div>`).join(""):'<div class="empty">Aucune tâche.</div>';
+      </div>`;
+    }).join(""):'<div class="empty">Aucune tâche.</div>';
   }
 
   async function compressImage(file) {
@@ -665,7 +690,7 @@
       </figure>`).join("") : `<div class="empty" style="grid-column:1/-1">Aucune photo pour le moment.</div>`;
   }
 
-  function renderAll(){renderPassengers();renderPassengerOptions();renderExpenses();renderBalances();renderTodos();renderGallery();}
+  function renderAll(){renderPassengers();renderPassengerOptions();renderTodoAssigneeOptions();renderExpenses();renderBalances();renderTodos();renderGallery();}
 
   loadAll();
   subscribeRealtime();
