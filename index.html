@@ -275,10 +275,7 @@
           <h3>Qui doit quoi ?</h3>
           <div class="balance" id="balanceList"></div>
           <div id="settlements"></div>
-          <div class="actions">
-            <button class="ghost-btn" id="exportData">Exporter mes données</button>
-            <label class="ghost-btn" style="display:inline-flex;align-items:center">Importer<input id="importData" type="file" accept="application/json" hidden></label>
-          </div>
+
         </section>
       </div>
 
@@ -297,7 +294,7 @@
         <div class="list" id="todoList"></div>
       </div>
     </div>
-    <p class="data-note"><strong>À savoir :</strong> les modifications sont enregistrées dans le navigateur de l’appareil utilisé. Elles ne modifient pas automatiquement le fichier publié sur GitHub et ne se synchronisent pas entre plusieurs téléphones. Le bouton « Exporter mes données » permet de créer une sauvegarde à réimporter ailleurs.</p>
+    <p class="data-note"><strong>Données partagées :</strong> les passagers, dépenses et tâches sont synchronisés en ligne. Toute personne qui ouvre le site voit les mêmes informations. Le code de modification est demandé uniquement pour ajouter, cocher ou supprimer un élément.</p>
   </section>
 
   <section class="section" id="galerie">
@@ -328,30 +325,66 @@
   </div>
 </dialog>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  const STORAGE_KEY = "catatrip2027-data-v2";
-  const initialData = {
-    passengers: [],
-    expenses: [],
-    todos: [
-      { id: crypto.randomUUID(), text: "Confirmer la liste des passagers", done: false },
-      { id: crypto.randomUUID(), text: "Préparer la liste des courses", done: false }
-    ]
-  };
-  let data = loadData();
+  /* À REMPLACER APRÈS LA CRÉATION DU PROJET SUPABASE */
+  const SUPABASE_URL = "https://oafmojjlgwsiiizxydvd.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_oEAmiRxEBWt1uWi-t3d6Gg_C_UUzyI4";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  function loadData() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : initialData;
-    } catch { return initialData; }
-  }
-  function saveData() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    renderAll();
+  let data = { passengers: [], expenses: [], todos: [] };
+  let editCode = sessionStorage.getItem("catatrip-edit-code") || "";
+
+  function configured() {
+    return !SUPABASE_URL.startsWith("COLLE_") && !SUPABASE_ANON_KEY.startsWith("COLLE_");
   }
   function esc(value) {
-    return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+    return String(value ?? "").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  }
+  function askEditCode() {
+    if (!editCode) {
+      editCode = prompt("Code de modification Catatrip :") || "";
+      if (editCode) sessionStorage.setItem("catatrip-edit-code", editCode);
+    }
+    return editCode;
+  }
+  function handleError(error) {
+    console.error(error);
+    const msg = error?.message || "Une erreur est survenue.";
+    if (/code|invalid|refus/i.test(msg)) {
+      editCode = "";
+      sessionStorage.removeItem("catatrip-edit-code");
+      alert("Code de modification incorrect.");
+    } else {
+      alert(msg);
+    }
+  }
+
+  async function loadAll() {
+    if (!configured()) {
+      document.body.insertAdjacentHTML("afterbegin", '<div style="position:sticky;top:0;z-index:99;padding:12px;background:#fff1c7;color:#5a4300;text-align:center;font-weight:700">Connexion Supabase à terminer : remplace les deux valeurs en haut du fichier index.html.</div>');
+      renderAll();
+      return;
+    }
+    const [p, e, t] = await Promise.all([
+      db.from("passengers").select("*").order("created_at"),
+      db.from("expenses").select("*").order("created_at"),
+      db.from("todos").select("*").order("created_at")
+    ]);
+    if (p.error || e.error || t.error) return handleError(p.error || e.error || t.error);
+    data.passengers = p.data || [];
+    data.expenses = (e.data || []).map(x => ({...x, amount:Number(x.amount)}));
+    data.todos = t.data || [];
+    renderAll();
+  }
+
+  function subscribeRealtime() {
+    if (!configured()) return;
+    db.channel("catatrip-live")
+      .on("postgres_changes", {event:"*", schema:"public", table:"passengers"}, loadAll)
+      .on("postgres_changes", {event:"*", schema:"public", table:"expenses"}, loadAll)
+      .on("postgres_changes", {event:"*", schema:"public", table:"todos"}, loadAll)
+      .subscribe();
   }
 
   const menuButton = document.querySelector(".menu-btn");
@@ -365,51 +398,75 @@
   const dialog = document.getElementById("passengerDialog");
   document.getElementById("openPassenger").onclick = () => dialog.showModal();
   document.querySelector(".close-modal").onclick = () => dialog.close();
-  document.getElementById("passengerForm").addEventListener("submit", e => {
+
+  document.getElementById("passengerForm").addEventListener("submit", async e => {
     e.preventDefault();
-    data.passengers.push({
-      id: crypto.randomUUID(),
-      name: document.getElementById("passengerName").value.trim(),
-      emoji: document.getElementById("passengerEmoji").value.trim() || "⛵",
-      role: document.getElementById("passengerRole").value.trim()
-    });
-    e.target.reset();
-    document.getElementById("passengerEmoji").value = "⛵";
-    dialog.close();
-    saveData();
+    const code = askEditCode(); if (!code) return;
+    const payload = {
+      p_name: document.getElementById("passengerName").value.trim(),
+      p_emoji: document.getElementById("passengerEmoji").value.trim() || "⛵",
+      p_role: document.getElementById("passengerRole").value.trim(),
+      p_code: code
+    };
+    const { error } = await db.rpc("add_passenger", payload);
+    if (error) return handleError(error);
+    e.target.reset(); document.getElementById("passengerEmoji").value = "⛵"; dialog.close(); loadAll();
   });
 
-  function removePassenger(id) {
-    const used = data.expenses.some(x => x.payer === id || x.participants.includes(id));
-    if (used && !confirm("Ce passager apparaît dans des dépenses. Le supprimer supprimera aussi ces dépenses. Continuer ?")) return;
-    data.passengers = data.passengers.filter(p => p.id !== id);
-    data.expenses = data.expenses.filter(x => x.payer !== id && !x.participants.includes(id));
-    saveData();
+  async function removePassenger(id) {
+    if (!confirm("Supprimer ce passager et les dépenses qui le concernent ?")) return;
+    const code = askEditCode(); if (!code) return;
+    const { error } = await db.rpc("delete_passenger", {p_id:id, p_code:code});
+    if (error) return handleError(error);
+    loadAll();
   }
 
-  document.getElementById("expenseForm").addEventListener("submit", e => {
+  document.getElementById("expenseForm").addEventListener("submit", async e => {
     e.preventDefault();
+    const code = askEditCode(); if (!code) return;
     const participants = [...document.getElementById("expenseParticipants").selectedOptions].map(o => o.value);
     if (!participants.length) return alert("Sélectionnez au moins une personne.");
-    data.expenses.push({
-      id: crypto.randomUUID(),
-      label: document.getElementById("expenseLabel").value.trim(),
-      amount: Number(document.getElementById("expenseAmount").value),
-      payer: document.getElementById("expensePayer").value,
-      participants
+    const { error } = await db.rpc("add_expense", {
+      p_label: document.getElementById("expenseLabel").value.trim(),
+      p_amount: Number(document.getElementById("expenseAmount").value),
+      p_payer: document.getElementById("expensePayer").value,
+      p_participants: participants,
+      p_code: code
     });
-    e.target.reset();
-    saveData();
+    if (error) return handleError(error);
+    e.target.reset(); loadAll();
   });
 
-  document.getElementById("todoForm").addEventListener("submit", e => {
+  async function deleteExpense(id) {
+    const code = askEditCode(); if (!code) return;
+    const { error } = await db.rpc("delete_expense", {p_id:id, p_code:code});
+    if (error) return handleError(error);
+    loadAll();
+  }
+
+  document.getElementById("todoForm").addEventListener("submit", async e => {
     e.preventDefault();
+    const code = askEditCode(); if (!code) return;
     const text = document.getElementById("todoText").value.trim();
     if (!text) return;
-    data.todos.push({ id: crypto.randomUUID(), text, done:false });
-    e.target.reset();
-    saveData();
+    const { error } = await db.rpc("add_todo", {p_text:text, p_code:code});
+    if (error) return handleError(error);
+    e.target.reset(); loadAll();
   });
+
+  async function toggleTodo(id) {
+    const code = askEditCode(); if (!code) { renderTodos(); return; }
+    const todo = data.todos.find(t => t.id === id);
+    const { error } = await db.rpc("toggle_todo", {p_id:id, p_done:!todo.done, p_code:code});
+    if (error) return handleError(error);
+    loadAll();
+  }
+  async function deleteTodo(id) {
+    const code = askEditCode(); if (!code) return;
+    const { error } = await db.rpc("delete_todo", {p_id:id, p_code:code});
+    if (error) return handleError(error);
+    loadAll();
+  }
 
   function renderPassengers() {
     const grid = document.getElementById("passengerGrid");
@@ -421,135 +478,71 @@
         <p>${esc(p.role || "Passager du Catatrip")}</p>
       </article>`).join("") : `<div class="empty" style="grid-column:1/-1">Aucun passager pour le moment.</div>`;
   }
-
   function renderPassengerOptions() {
-    const payer = document.getElementById("expensePayer");
-    const participants = document.getElementById("expenseParticipants");
     const options = data.passengers.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
-    payer.innerHTML = `<option value="">Choisir…</option>${options}`;
-    participants.innerHTML = options;
+    document.getElementById("expensePayer").innerHTML = `<option value="">Choisir…</option>${options}`;
+    document.getElementById("expenseParticipants").innerHTML = options;
   }
-
-  function nameById(id) {
-    return data.passengers.find(p => p.id === id)?.name || "Passager supprimé";
-  }
+  function nameById(id) { return data.passengers.find(p => p.id === id)?.name || "Passager supprimé"; }
 
   function renderExpenses() {
     const list = document.getElementById("expenseList");
     list.innerHTML = data.expenses.length ? data.expenses.map(x => `
       <div class="list-item">
         <div class="list-item-main">
-          <strong>${esc(x.label)} — ${x.amount.toFixed(2).replace(".",",")} €</strong>
-          <small>Payé par ${esc(nameById(x.payer))} • partagé entre ${x.participants.map(nameById).map(esc).join(", ")}</small>
+          <strong>${esc(x.label)} — ${Number(x.amount).toFixed(2).replace(".",",")} €</strong>
+          <small>Payé par ${esc(nameById(x.payer))} • partagé entre ${(x.participants || []).map(nameById).map(esc).join(", ")}</small>
         </div>
         <button class="danger-btn" onclick="deleteExpense('${x.id}')" aria-label="Supprimer">×</button>
       </div>`).join("") : `<div class="empty">Aucune dépense enregistrée.</div>`;
   }
 
-  function deleteExpense(id) {
-    data.expenses = data.expenses.filter(x => x.id !== id);
-    saveData();
-  }
-
   function calculateBalances() {
-    const balances = Object.fromEntries(data.passengers.map(p => [p.id, 0]));
+    const balances = Object.fromEntries(data.passengers.map(p => [p.id,0]));
     for (const x of data.expenses) {
-      if (!(x.payer in balances) || !x.participants.length) continue;
-      balances[x.payer] += x.amount;
-      const share = x.amount / x.participants.length;
+      if (!(x.payer in balances) || !x.participants?.length) continue;
+      balances[x.payer] += Number(x.amount);
+      const share = Number(x.amount) / x.participants.length;
       x.participants.forEach(id => { if (id in balances) balances[id] -= share; });
     }
     return balances;
   }
-
   function getSettlements(balances) {
-    const creditors = Object.entries(balances).filter(([,v]) => v > .005).map(([id,v]) => ({id, amount:v})).sort((a,b)=>b.amount-a.amount);
-    const debtors = Object.entries(balances).filter(([,v]) => v < -.005).map(([id,v]) => ({id, amount:-v})).sort((a,b)=>b.amount-a.amount);
-    const result = [];
-    let i=0,j=0;
+    const creditors = Object.entries(balances).filter(([,v])=>v>.005).map(([id,v])=>({id,amount:v})).sort((a,b)=>b.amount-a.amount);
+    const debtors = Object.entries(balances).filter(([,v])=>v<-.005).map(([id,v])=>({id,amount:-v})).sort((a,b)=>b.amount-a.amount);
+    const result=[]; let i=0,j=0;
     while(i<debtors.length && j<creditors.length) {
-      const amount = Math.min(debtors[i].amount, creditors[j].amount);
+      const amount=Math.min(debtors[i].amount,creditors[j].amount);
       result.push({from:debtors[i].id,to:creditors[j].id,amount});
-      debtors[i].amount -= amount; creditors[j].amount -= amount;
-      if(debtors[i].amount < .005) i++;
-      if(creditors[j].amount < .005) j++;
+      debtors[i].amount-=amount; creditors[j].amount-=amount;
+      if(debtors[i].amount<.005)i++; if(creditors[j].amount<.005)j++;
     }
     return result;
   }
-
   function renderBalances() {
-    const balances = calculateBalances();
-    const wrap = document.getElementById("balanceList");
-    if (!data.passengers.length) {
-      wrap.innerHTML = `<div class="empty">Ajoutez d’abord les passagers.</div>`;
-      document.getElementById("settlements").innerHTML = "";
-      return;
-    }
-    wrap.innerHTML = data.passengers.map(p => {
-      const value = balances[p.id] || 0;
-      const label = value > .005 ? `doit recevoir ${value.toFixed(2).replace(".",",")} €` :
-                    value < -.005 ? `doit ${Math.abs(value).toFixed(2).replace(".",",")} €` : "est à l’équilibre";
+    const balances=calculateBalances(), wrap=document.getElementById("balanceList");
+    if(!data.passengers.length){wrap.innerHTML='<div class="empty">Ajoutez d’abord les passagers.</div>';document.getElementById("settlements").innerHTML="";return;}
+    wrap.innerHTML=data.passengers.map(p=>{
+      const v=balances[p.id]||0;
+      const label=v>.005?`doit recevoir ${v.toFixed(2).replace(".",",")} €`:v<-.005?`doit ${Math.abs(v).toFixed(2).replace(".",",")} €`:"est à l’équilibre";
       return `<div class="balance-row"><strong>${esc(p.name)}</strong><span>${label}</span></div>`;
     }).join("");
-    const settlements = getSettlements(balances);
-    document.getElementById("settlements").innerHTML = settlements.length
-      ? `<div class="settlement"><strong>Remboursements conseillés</strong><br>${settlements.map(s => `${esc(nameById(s.from))} → ${esc(nameById(s.to))} : <strong>${s.amount.toFixed(2).replace(".",",")} €</strong>`).join("<br>")}</div>`
-      : `<div class="settlement">Tout le monde est à l’équilibre.</div>`;
+    const s=getSettlements(balances);
+    document.getElementById("settlements").innerHTML=s.length?`<div class="settlement"><strong>Remboursements conseillés</strong><br>${s.map(x=>`${esc(nameById(x.from))} → ${esc(nameById(x.to))} : <strong>${x.amount.toFixed(2).replace(".",",")} €</strong>`).join("<br>")}</div>`:'<div class="settlement">Tout le monde est à l’équilibre.</div>';
   }
-
   function renderTodos() {
-    const list = document.getElementById("todoList");
-    list.innerHTML = data.todos.length ? data.todos.map(t => `
-      <div class="list-item ${t.done ? "todo-done" : ""}">
-        <div class="list-item-main">
-          <label style="display:flex;grid-template-columns:auto 1fr;align-items:center;color:inherit;font-size:1rem">
-            <input class="todo-check" type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTodo('${t.id}')">
-            <strong>${esc(t.text)}</strong>
-          </label>
-        </div>
+    const list=document.getElementById("todoList");
+    list.innerHTML=data.todos.length?data.todos.map(t=>`
+      <div class="list-item ${t.done?"todo-done":""}">
+        <div class="list-item-main"><label style="display:flex;grid-template-columns:auto 1fr;align-items:center;color:inherit;font-size:1rem">
+          <input class="todo-check" type="checkbox" ${t.done?"checked":""} onchange="toggleTodo('${t.id}')"><strong>${esc(t.text)}</strong>
+        </label></div>
         <button class="danger-btn" onclick="deleteTodo('${t.id}')" aria-label="Supprimer">×</button>
-      </div>`).join("") : `<div class="empty">Aucune tâche.</div>`;
+      </div>`).join(""):'<div class="empty">Aucune tâche.</div>';
   }
-
-  function toggleTodo(id) {
-    const todo = data.todos.find(t => t.id === id);
-    if (todo) todo.done = !todo.done;
-    saveData();
-  }
-  function deleteTodo(id) {
-    data.todos = data.todos.filter(t => t.id !== id);
-    saveData();
-  }
-
-  document.getElementById("exportData").addEventListener("click", () => {
-    const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url; a.download = "catatrip-2027-donnees.json"; a.click();
-    URL.revokeObjectURL(url);
-  });
-  document.getElementById("importData").addEventListener("change", e => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const imported = JSON.parse(reader.result);
-        if (!imported.passengers || !imported.expenses || !imported.todos) throw new Error();
-        data = imported; saveData(); alert("Données importées.");
-      } catch { alert("Fichier invalide."); }
-    };
-    reader.readAsText(file);
-  });
-
-  function renderAll() {
-    renderPassengers();
-    renderPassengerOptions();
-    renderExpenses();
-    renderBalances();
-    renderTodos();
-  }
-  renderAll();
+  function renderAll(){renderPassengers();renderPassengerOptions();renderExpenses();renderBalances();renderTodos();}
+  loadAll();
+  subscribeRealtime();
 </script>
 </body>
 </html>
