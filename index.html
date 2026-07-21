@@ -183,6 +183,138 @@
     .comment-delete { float:right; border:0; background:transparent; color:var(--danger); padding:0 0 0 8px; }
 
 
+
+    .trip-countdown {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      margin:12px 0 22px;
+      padding:10px 16px;
+      border:1px solid rgba(255,255,255,.45);
+      border-radius:999px;
+      background:rgba(3,28,39,.34);
+      backdrop-filter:blur(8px);
+      color:white;
+      font-weight:800;
+      letter-spacing:.03em;
+    }
+
+    .todo-controls {
+      display:flex;
+      justify-content:flex-end;
+      margin:20px 0 10px;
+    }
+    .todo-controls label {
+      width:min(320px,100%);
+    }
+    .todo-done {
+      opacity:.72;
+      background:#f3f7f5;
+    }
+    .todo-done strong {
+      text-decoration:line-through;
+    }
+    .todo-state {
+      display:inline-flex;
+      margin-top:6px;
+      padding:3px 8px;
+      border-radius:999px;
+      background:var(--lagoon);
+      color:var(--blue);
+      font-size:.72rem;
+      font-weight:800;
+    }
+    .todo-done .todo-state {
+      background:#e5efe8;
+      color:#3f6d4e;
+    }
+
+    .photo-card > div:first-child {
+      overflow:hidden;
+      border-radius:22px 22px 0 0;
+    }
+    .photo-card > div:first-child img {
+      width:100%;
+      aspect-ratio:4/3;
+      object-fit:cover;
+      display:block;
+      cursor:zoom-in;
+      transition:transform .22s ease;
+    }
+    .photo-card > div:first-child img:hover {
+      transform:scale(1.025);
+    }
+
+    .photo-lightbox {
+      width:min(1100px,calc(100% - 20px));
+      max-width:none;
+      padding:0;
+      border:0;
+      background:transparent;
+      overflow:visible;
+    }
+    .photo-lightbox::backdrop {
+      background:rgba(2,15,22,.94);
+    }
+    .lightbox-inner {
+      position:relative;
+      min-height:75vh;
+      display:grid;
+      place-items:center;
+    }
+    .lightbox-inner img {
+      max-width:100%;
+      max-height:78vh;
+      object-fit:contain;
+      border-radius:14px;
+      background:#06141b;
+      touch-action:pan-y pinch-zoom;
+    }
+    .lightbox-close,
+    .lightbox-nav {
+      position:absolute;
+      z-index:3;
+      border:0;
+      border-radius:50%;
+      background:rgba(255,255,255,.94);
+      color:var(--ink);
+      box-shadow:0 8px 30px rgba(0,0,0,.25);
+    }
+    .lightbox-close {
+      top:-6px;
+      right:-2px;
+      width:42px;
+      height:42px;
+      font-size:1.55rem;
+    }
+    .lightbox-nav {
+      top:50%;
+      transform:translateY(-50%);
+      width:48px;
+      height:48px;
+      font-size:2rem;
+    }
+    .lightbox-prev { left:8px; }
+    .lightbox-next { right:8px; }
+    .lightbox-counter {
+      position:absolute;
+      top:5px;
+      left:50%;
+      transform:translateX(-50%);
+      z-index:3;
+      padding:6px 11px;
+      border-radius:999px;
+      background:rgba(0,0,0,.55);
+      color:white;
+      font-size:.82rem;
+      font-weight:800;
+    }
+    .lightbox-caption {
+      margin:14px 0 0;
+      color:white;
+      text-align:center;
+    }
+
     @media (max-width:900px) {
       .passenger-grid { grid-template-columns:repeat(2,1fr); }
       .tool-grid { grid-template-columns:1fr; }
@@ -211,6 +343,15 @@
       .gallery-grid { grid-template-columns:1fr; grid-template-rows:350px 180px 180px; }
       .gallery-upload-grid { grid-template-columns:1fr; }
       .comment-form { grid-template-columns:1fr; }
+      .todo-controls { justify-content:stretch; }
+      .todo-controls label { width:100%; }
+      .gallery-grid { grid-template-columns:1fr; gap:16px; }
+      .photo-card { border-radius:18px; }
+      .photo-comments { padding:12px; }
+      .lightbox-nav { width:40px; height:40px; }
+      .lightbox-prev { left:3px; }
+      .lightbox-next { right:3px; }
+      .lightbox-close { right:3px; }
       .gallery-main { grid-row:auto; }
       .form-grid { grid-template-columns:1fr; }
       .form-grid .full { grid-column:auto; }
@@ -229,7 +370,7 @@
 <div class="hero-content">
 <p class="eyebrow">Port d’Hyères • Méditerranée</p>
 <h1>Catatrip<br/>2027</h1>
-<p class="hero-date">Du 30 juin au 2 juillet 2027</p>
+<p class="hero-date">Du 30 juin au 2 juillet 2027</p><div class="trip-countdown" id="tripCountdown">Calcul du décompte…</div>
 <a class="cta" href="#passagers">Voir l’équipage</a>
 </div>
 <div class="scroll-indicator"><span>Faire défiler</span><div class="line"></div></div>
@@ -287,7 +428,7 @@
 <label>Attribuée à<select id="todoAssignee" multiple="" size="6"></select><small class="multi-help">Sélectionne une ou plusieurs personnes. Choisis « All » seul pour tout le monde.</small></label></div>
 <button class="secondary-btn" style="margin-top:14px" type="submit">Ajouter</button>
 </form>
-<div class="list" id="todoList"></div>
+<div class="todo-controls"><label for="todoFilter">Afficher les tâches de<select id="todoFilter"></select></label></div><div class="list" id="todoList"></div>
 </div><div class="section-heading" id="courses" style="margin-top:90px"><p class="section-kicker">À embarquer</p><h2>Liste de courses</h2><p class="muted">Ajoutez les produits à acheter, leur quantité et la personne qui s’en charge.</p></div><div class="panel"><form id="shoppingForm"><div class="form-grid"><label>Produit<input id="shoppingItem" placeholder="Eau, glaçons, fruits…" required="True"/></label><label>Quantité<input id="shoppingQuantity" placeholder="2 packs, 1 kg…"/></label><label class="full">Attribué à<select id="shoppingAssignees" multiple="True" size="6"></select><small class="multi-help">Sélectionne une ou plusieurs personnes. Choisis « All » seul pour tout le monde.</small></label></div><button class="secondary-btn" style="margin-top:14px" type="submit">Ajouter à la liste</button></form><div class="list" id="shoppingList"></div></div>
 </div>
 <p class="data-note"><strong>Données partagées :</strong> les passagers, dépenses, remboursements et tâches sont synchronisés en ligne. Toute personne qui ouvre le site voit les mêmes informations. Lorsqu’un remboursement est marqué comme effectué, les soldes se recalculent automatiquement.</p>
@@ -508,6 +649,8 @@
     loadAll();
   }
 
+  document.getElementById("todoFilter").addEventListener("change", renderTodos);
+
   function renderPassengers() {
     const grid = document.getElementById("passengerGrid");
     grid.innerHTML = data.passengers.length ? data.passengers.map(p => `
@@ -629,30 +772,54 @@
 
   function renderTodoAssigneeOptions() {
     const select = document.getElementById("todoAssignee");
-    if (!select) return;
-    select.innerHTML = `<option value="">All — tout le monde</option>` +
-      data.passengers.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+    if (select) {
+      select.innerHTML = `<option value="">All — tout le monde</option>` +
+        data.passengers.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+    }
+
+    const filter = document.getElementById("todoFilter");
+    if (filter) {
+      const current = filter.value;
+      filter.innerHTML = `<option value="">Toutes les tâches</option>` +
+        `<option value="all">Tâches pour tout le monde</option>` +
+        data.passengers.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+      if ([...filter.options].some(option => option.value === current)) {
+        filter.value = current;
+      }
+    }
   }
 
   function renderTodos() {
-    const list=document.getElementById("todoList");
-    list.innerHTML=data.todos.length?data.todos.map(t=>{
+    const list = document.getElementById("todoList");
+    const filter = document.getElementById("todoFilter")?.value || "";
+
+    const visibleTodos = data.todos
+      .filter(t => {
+        const ids = Array.isArray(t.assignees) ? t.assignees : (t.assignee ? [t.assignee] : []);
+        if (!filter) return true;
+        if (filter === "all") return ids.length === 0;
+        return ids.includes(filter);
+      })
+      .sort((a, b) => Number(a.done) - Number(b.done));
+
+    list.innerHTML = visibleTodos.length ? visibleTodos.map(t => {
       const ids = Array.isArray(t.assignees) ? t.assignees : (t.assignee ? [t.assignee] : []);
       const assigneeLabel = ids.length ? ids.map(nameById).join(", ") : "All";
       return `
-      <div class="list-item ${t.done?"todo-done":""}">
+      <div class="list-item ${t.done ? "todo-done" : ""}">
         <div class="list-item-main">
           <label style="display:flex;grid-template-columns:auto 1fr;align-items:center;color:inherit;font-size:1rem">
-            <input class="todo-check" type="checkbox" ${t.done?"checked":""} onchange="toggleTodo('${t.id}')">
+            <input class="todo-check" type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTodo('${t.id}')">
             <span>
               <strong>${esc(t.text)}</strong>
               <small>Attribuée à : ${esc(assigneeLabel)}</small>
+              <span class="todo-state">${t.done ? "✓ Fait" : "À faire"}</span>
             </span>
           </label>
         </div>
         <button class="danger-btn" onclick="deleteTodo('${t.id}')" aria-label="Supprimer">×</button>
       </div>`;
-    }).join(""):'<div class="empty">Aucune tâche.</div>';
+    }).join("") : '<div class="empty">Aucune tâche correspondant à ce filtre.</div>';
   }
 
   function renderShoppingAssigneeOptions() {
@@ -876,6 +1043,76 @@
     loadAll();
   }
 
+
+  function updateTripCountdown() {
+    const target = new Date("2027-06-30T09:00:00+02:00");
+    const now = new Date();
+    const diff = target - now;
+    const el = document.getElementById("tripCountdown");
+    if (!el) return;
+
+    if (diff <= 0) {
+      el.textContent = "Le Catatrip est lancé ! ⛵";
+      return;
+    }
+
+    const totalDays = Math.floor(diff / 86400000);
+    const hours = Math.floor((diff % 86400000) / 3600000);
+    el.textContent = `J-${totalDays} • ${hours} h avant le départ`;
+  }
+
+  let lightboxIndex = 0;
+  let touchStartX = null;
+
+  function openPhoto(index) {
+    if (!data.photos.length) return;
+    lightboxIndex = index;
+    updateLightbox();
+    document.getElementById("photoLightbox").showModal();
+  }
+
+  function updateLightbox() {
+    const photo = data.photos[lightboxIndex];
+    if (!photo) return;
+    document.getElementById("lightboxImage").src = photo.image_data;
+    document.getElementById("lightboxCaption").textContent = photo.name || "Photo du voyage";
+    document.getElementById("lightboxCounter").textContent = `${lightboxIndex + 1} / ${data.photos.length}`;
+  }
+
+  function changePhoto(step) {
+    if (!data.photos.length) return;
+    lightboxIndex = (lightboxIndex + step + data.photos.length) % data.photos.length;
+    updateLightbox();
+  }
+
+  document.querySelector(".lightbox-close").addEventListener("click", () => {
+    document.getElementById("photoLightbox").close();
+  });
+  document.querySelector(".lightbox-prev").addEventListener("click", () => changePhoto(-1));
+  document.querySelector(".lightbox-next").addEventListener("click", () => changePhoto(1));
+
+  document.getElementById("photoLightbox").addEventListener("click", event => {
+    if (event.target.id === "photoLightbox") event.currentTarget.close();
+  });
+
+  document.getElementById("photoLightbox").addEventListener("touchstart", event => {
+    touchStartX = event.changedTouches[0].clientX;
+  }, { passive:true });
+
+  document.getElementById("photoLightbox").addEventListener("touchend", event => {
+    if (touchStartX === null) return;
+    const delta = event.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(delta) > 45) changePhoto(delta > 0 ? -1 : 1);
+    touchStartX = null;
+  }, { passive:true });
+
+  document.addEventListener("keydown", event => {
+    const dialog = document.getElementById("photoLightbox");
+    if (!dialog.open) return;
+    if (event.key === "ArrowLeft") changePhoto(-1);
+    if (event.key === "ArrowRight") changePhoto(1);
+  });
+
   async function addPhotoComment(photoId) {
     const author = document.getElementById(`commentAuthor-${photoId}`).value;
     const input = document.getElementById(`commentText-${photoId}`);
@@ -906,12 +1143,12 @@
     const grid = document.getElementById("galleryGrid");
     if (!grid) return;
 
-    grid.innerHTML = data.photos.length ? data.photos.map(photo => {
+    grid.innerHTML = data.photos.length ? data.photos.map((photo, photoIndex) => {
       const comments = data.photoComments.filter(c => c.photo_id === photo.id);
       return `
       <article class="photo-card">
         <div style="position:relative">
-          <img src="${photo.image_data}" alt="${esc(photo.name || "Photo du voyage")}" loading="lazy">
+          <img src="${photo.image_data}" alt="${esc(photo.name || "Photo du voyage")}" loading="lazy" onclick="openPhoto(${photoIndex})">
           <button class="photo-delete" onclick="deletePhoto('${photo.id}')" aria-label="Supprimer">×</button>
         </div>
         <div class="photo-comments">
@@ -940,9 +1177,11 @@
 
   function renderAll(){renderPassengers();renderPassengerOptions();renderTodoAssigneeOptions();renderShoppingAssigneeOptions();renderExpenses();renderBalances();renderTodos();renderShopping();renderGallery();}
 
+  updateTripCountdown();
+  setInterval(updateTripCountdown, 60000);
   loadAll();
   loadWeather();
   subscribeRealtime();
 </script>
-</body>
+<dialog class="photo-lightbox" id="photoLightbox"><div class="lightbox-inner"><button aria-label="Fermer" class="lightbox-close" type="button">×</button><div class="lightbox-counter" id="lightboxCounter"></div><button aria-label="Photo précédente" class="lightbox-nav lightbox-prev" type="button">‹</button><img alt="Photo agrandie" id="lightboxImage"/><button aria-label="Photo suivante" class="lightbox-nav lightbox-next" type="button">›</button><p class="lightbox-caption" id="lightboxCaption"></p></div></dialog></body>
 </html>
