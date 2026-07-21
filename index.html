@@ -45,7 +45,45 @@
     }
     .hero h1,h2,blockquote { font-family:"Playfair Display",serif; }
     .hero h1 { margin:0; max-width:720px; font-size:clamp(5rem,10vw,9rem); line-height:.78; letter-spacing:-.055em; }
-    .hero-date { margin:36px 0; font-size:clamp(1.1rem,2vw,1.45rem); }
+    .hero-date { margin:36px 0 18px; font-size:clamp(1.1rem,2vw,1.45rem); }
+    .trip-countdown {
+      width:min(620px,100%);
+      margin:0 0 28px;
+      padding:16px 18px;
+      border:1px solid rgba(255,255,255,.38);
+      border-radius:20px;
+      background:rgba(5,25,34,.38);
+      backdrop-filter:blur(10px);
+    }
+    .countdown-label {
+      display:block;
+      margin-bottom:10px;
+      text-transform:uppercase;
+      letter-spacing:.16em;
+      font-size:.7rem;
+      font-weight:700;
+      opacity:.82;
+    }
+    .countdown-values {
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+    }
+    .countdown-values strong {
+      display:grid;
+      gap:2px;
+      font-family:"Playfair Display",serif;
+      font-size:clamp(1.5rem,3vw,2.15rem);
+      line-height:1;
+    }
+    .countdown-values small {
+      font-family:"DM Sans",sans-serif;
+      font-size:.64rem;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      opacity:.72;
+    }
     .cta,.secondary-btn {
       display:inline-flex; align-items:center; justify-content:center; border:0; border-radius:999px;
       padding:14px 21px; font-weight:700;
@@ -157,6 +195,7 @@
 
 
     .multi-help { color:var(--muted); font-weight:400; line-height:1.35; }
+    .shopping-meta { display:block; margin-top:4px; color:var(--muted); font-size:.82rem; }
 
     .weather-status { margin-bottom:22px; padding:20px; border-radius:18px; background:var(--lagoon); line-height:1.6; }
     .weather-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
@@ -194,6 +233,8 @@
       .nav-links.open { display:flex; }
       .hero-content { padding:19vh 20px 90px; }
       .hero h1 { font-size:clamp(4.2rem,23vw,6.2rem); }
+      .countdown-values { grid-template-columns:repeat(2,1fr); }
+      .trip-countdown { max-width:390px; }
       .scroll-indicator { display:none; }
       .section,.tool-wrap { padding:82px 20px; }
       .intro { grid-template-columns:1fr; gap:36px; }
@@ -222,13 +263,22 @@
 <nav class="nav">
 <a class="brand" href="#accueil">CATATRIP 2027</a>
 <button aria-expanded="false" aria-label="Ouvrir le menu" class="menu-btn">☰</button>
-<div class="nav-links"><a href="#passagers">Passagers</a><a href="#depenses">Dépenses</a><a href="#todo">Todo</a><a href="#meteo">Météo</a><a href="#programme">Programme</a><a href="#bateau">Le bateau</a><a href="#galerie">Galerie</a></div>
+<div class="nav-links"><a href="#passagers">Passagers</a><a href="#depenses">Dépenses</a><a href="#todo">Todo</a><a href="#courses">Courses</a><a href="#meteo">Météo</a><a href="#programme">Programme</a><a href="#bateau">Le bateau</a><a href="#galerie">Galerie</a></div>
 </nav>
 <div class="overlay"></div>
 <div class="hero-content">
 <p class="eyebrow">Port d’Hyères • Méditerranée</p>
 <h1>Catatrip<br/>2027</h1>
 <p class="hero-date">Du 30 juin au 2 juillet 2027</p>
+<div class="trip-countdown" id="tripCountdown" aria-live="polite">
+  <span class="countdown-label">Départ dans</span>
+  <div class="countdown-values">
+    <strong><span id="countdownDays">—</span><small>jours</small></strong>
+    <strong><span id="countdownHours">—</span><small>heures</small></strong>
+    <strong><span id="countdownMinutes">—</span><small>minutes</small></strong>
+    <strong><span id="countdownSeconds">—</span><small>secondes</small></strong>
+  </div>
+</div>
 <a class="cta" href="#passagers">Voir l’équipage</a>
 </div>
 <div class="scroll-indicator"><span>Faire défiler</span><div class="line"></div></div>
@@ -288,8 +338,25 @@
 </form>
 <div class="list" id="todoList"></div>
 </div>
+
+<div class="section-heading" id="courses" style="margin-top:90px">
+<p class="section-kicker">À embarquer</p>
+<h2>Liste de courses</h2>
+<p class="muted">Ajoutez les produits à acheter, leur quantité et la personne qui s’en charge.</p>
 </div>
-<p class="data-note"><strong>Données partagées :</strong> les passagers, dépenses, remboursements, tâches, photos et commentaires sont synchronisés en ligne. Toute personne qui ouvre le site voit les mêmes informations. Lorsqu’un remboursement est marqué comme effectué, les soldes se recalculent automatiquement.</p>
+<div class="panel">
+<form id="shoppingForm">
+<div class="form-grid">
+<label>Produit<input id="shoppingItem" placeholder="Eau, glaçons, fruits…" required=""/></label>
+<label>Quantité<input id="shoppingQuantity" placeholder="2 packs, 1 kg…"/></label>
+<label class="full">Attribué à<select id="shoppingAssignees" multiple="" size="6"></select><small class="multi-help">Sélectionnez une ou plusieurs personnes. Choisissez « All » seul pour tout le monde.</small></label>
+</div>
+<button class="secondary-btn" style="margin-top:14px" type="submit">Ajouter à la liste</button>
+</form>
+<div class="list" id="shoppingList"></div>
+</div>
+</div>
+<p class="data-note"><strong>Données partagées :</strong> les passagers, dépenses, remboursements, tâches, courses, photos et commentaires sont synchronisés en ligne. Toute personne qui ouvre le site voit les mêmes informations. Lorsqu’un remboursement est marqué comme effectué, les soldes se recalculent automatiquement.</p>
 </section><section class="section weather-section" id="meteo"><div class="section-heading"><p class="section-kicker">Conditions de navigation</p><h2>Météo du Catatrip</h2><p class="muted">Les prévisions se chargeront automatiquement lorsqu’elles seront disponibles.</p></div><div class="weather-status" id="weatherStatus"></div><div class="weather-grid" id="weatherGrid"></div><p class="weather-note">Prévisions indicatives pour Hyères et le secteur de Porquerolles. Vérifiez toujours les bulletins marins officiels avant de naviguer.</p></section><section class="section" id="programme">
 <div class="section-heading"><p class="section-kicker">Journal de bord</p><h2>Le programme</h2></div>
 <div class="timeline">
@@ -331,7 +398,7 @@
   const SUPABASE_ANON_KEY = "sb_publishable_oEAmiRxEBWt1uWi-t3d6Gg_C_UUzyI4";
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  let data = { passengers: [], expenses: [], repayments: [], todos: [], photos: [], photoComments: [] };
+  let data = { passengers: [], expenses: [], repayments: [], todos: [], shopping: [], photos: [], photoComments: [] };
   let editCode = sessionStorage.getItem("catatrip-edit-code") || "";
 
   function configured() {
@@ -371,11 +438,12 @@
       db.from("expenses").select("*").order("created_at"),
       db.from("repayments").select("*").order("created_at"),
       db.from("todos").select("*").order("created_at"),
+      db.from("shopping_items").select("*").order("created_at"),
       db.from("gallery_photos").select("*").order("created_at", { ascending:false }),
       db.from("photo_comments").select("*").order("created_at")
     ]);
 
-    const [p, e, r, t, g, pc] = results;
+    const [p, e, r, t, s, g, pc] = results;
 
     if (!p.error) data.passengers = p.data || [];
     else console.error("passengers", p.error);
@@ -389,6 +457,11 @@
     if (!t.error) data.todos = t.data || [];
     else console.error("todos", t.error);
 
+    if (!s.error) data.shopping = s.data || [];
+    else {
+      data.shopping = [];
+      console.error("shopping_items", s.error);
+    }
 
     if (!g.error) data.photos = g.data || [];
     else console.error("gallery_photos", g.error);
@@ -406,10 +479,37 @@
       .on("postgres_changes", {event:"*", schema:"public", table:"expenses"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"repayments"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"todos"}, loadAll)
+      .on("postgres_changes", {event:"*", schema:"public", table:"shopping_items"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"gallery_photos"}, loadAll)
       .on("postgres_changes", {event:"*", schema:"public", table:"photo_comments"}, loadAll)
       .subscribe();
   }
+
+  const TRIP_START = new Date("2027-06-30T09:00:00+02:00");
+
+  function updateCountdown() {
+    const remaining = TRIP_START.getTime() - Date.now();
+    const wrap = document.getElementById("tripCountdown");
+    if (!wrap) return;
+
+    if (remaining <= 0) {
+      wrap.innerHTML = '<span class="countdown-label">Le Catatrip a commencé</span><div class="countdown-values"><strong style="grid-column:1/-1"><span>Bon voyage ! ⛵</span></strong></div>';
+      return;
+    }
+
+    const days = Math.floor(remaining / 86400000);
+    const hours = Math.floor((remaining % 86400000) / 3600000);
+    const minutes = Math.floor((remaining % 3600000) / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+
+    document.getElementById("countdownDays").textContent = days;
+    document.getElementById("countdownHours").textContent = String(hours).padStart(2, "0");
+    document.getElementById("countdownMinutes").textContent = String(minutes).padStart(2, "0");
+    document.getElementById("countdownSeconds").textContent = String(seconds).padStart(2, "0");
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
 
   const menuButton = document.querySelector(".menu-btn");
   const navLinks = document.querySelector(".nav-links");
@@ -651,6 +751,88 @@
   }
 
 
+
+  function renderShoppingAssigneeOptions() {
+    const select = document.getElementById("shoppingAssignees");
+    if (!select) return;
+    select.innerHTML = `<option value="">All — tout le monde</option>` +
+      data.passengers.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("");
+  }
+
+  document.getElementById("shoppingForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const code = askEditCode(); if (!code) return;
+
+    const item = document.getElementById("shoppingItem").value.trim();
+    const quantity = document.getElementById("shoppingQuantity").value.trim();
+    const selected = [...document.getElementById("shoppingAssignees").selectedOptions].map(o => o.value);
+    const assignees = selected.includes("") || selected.length === 0 ? [] : selected;
+
+    if (!item) return;
+
+    const { error } = await db.rpc("add_shopping_item", {
+      p_item: item,
+      p_quantity: quantity,
+      p_assignees: assignees,
+      p_code: code
+    });
+
+    if (error) return handleError(error);
+    e.target.reset();
+    renderShoppingAssigneeOptions();
+    loadAll();
+  });
+
+  async function toggleShopping(id) {
+    const code = askEditCode(); if (!code) { renderShopping(); return; }
+    const item = data.shopping.find(x => x.id === id);
+    if (!item) return;
+    const { error } = await db.rpc("toggle_shopping_item", {
+      p_id: id,
+      p_done: !item.done,
+      p_code: code
+    });
+    if (error) return handleError(error);
+    loadAll();
+  }
+
+  async function deleteShopping(id) {
+    const code = askEditCode(); if (!code) return;
+    const { error } = await db.rpc("delete_shopping_item", { p_id:id, p_code:code });
+    if (error) return handleError(error);
+    loadAll();
+  }
+
+  function renderShopping() {
+    const list = document.getElementById("shoppingList");
+    if (!list) return;
+
+    const sorted = data.shopping.slice().sort((a, b) =>
+      Number(a.done) - Number(b.done) ||
+      new Date(a.created_at) - new Date(b.created_at)
+    );
+
+    list.innerHTML = sorted.length ? sorted.map(item => {
+      const ids = Array.isArray(item.assignees) ? item.assignees : [];
+      const assigneeLabel = ids.length ? ids.map(nameById).join(", ") : "All";
+      const qty = item.quantity ? ` • ${esc(item.quantity)}` : "";
+
+      return `
+        <div class="list-item ${item.done ? "todo-done" : ""}">
+          <div class="list-item-main">
+            <label style="display:flex;grid-template-columns:auto 1fr;align-items:center;color:inherit;font-size:1rem">
+              <input class="todo-check" type="checkbox" ${item.done ? "checked" : ""} onchange="toggleShopping('${item.id}')">
+              <span>
+                <strong>${esc(item.item)}${qty}</strong>
+                <small class="shopping-meta">Attribué à : ${esc(assigneeLabel)}</small>
+              </span>
+            </label>
+          </div>
+          <button class="danger-btn" onclick="deleteShopping('${item.id}')" aria-label="Supprimer">×</button>
+        </div>`;
+    }).join("") : '<div class="empty">La liste de courses est vide.</div>';
+  }
+
   const TRIP_DATES = ["2027-06-30", "2027-07-01", "2027-07-02"];
 
   function weatherDescription(code) {
@@ -858,7 +1040,7 @@
     }).join("") : `<div class="empty" style="grid-column:1/-1">Aucune photo pour le moment.</div>`;
   }
 
-  function renderAll(){renderPassengers();renderPassengerOptions();renderTodoAssigneeOptions();renderExpenses();renderBalances();renderTodos();renderGallery();}
+  function renderAll(){renderPassengers();renderPassengerOptions();renderTodoAssigneeOptions();renderShoppingAssigneeOptions();renderExpenses();renderBalances();renderTodos();renderShopping();renderGallery();}
 
   loadAll();
   loadWeather();
